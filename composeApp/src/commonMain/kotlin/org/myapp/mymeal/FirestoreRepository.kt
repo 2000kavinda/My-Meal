@@ -1,5 +1,6 @@
 package org.myapp.mymeal
 
+import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 
@@ -79,5 +80,63 @@ class FirestoreRepository {
             e.printStackTrace() // Print the error for debugging purposes
             emptyList() // Return an empty list if there's an error
         }
+    }
+
+    suspend fun fetchNutritionData(email: String): List<Order> {
+        val snapshot = db.collection("orders")
+            .whereEqualTo("email", email)
+            .get()
+            .await()
+
+        return snapshot.documents.mapNotNull { doc ->
+            doc.toObject(Order::class.java)
+        }
+    }
+
+    suspend fun fetchCardDetails(cardNumber: String): Card? {
+        return try {
+            val document = db.collection("cards").whereEqualTo("card", cardNumber).get().await()
+            document.documents.firstOrNull()?.toObject(Card::class.java)
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    /*suspend fun fetchCardDetails(cardNumber: String): CardDetails? {
+        val docRef = db.collection("cards").document(cardNumber)
+        val document = docRef.get().await()
+        return if (document.exists()) {
+            document.toObject(CardDetails::class.java)
+        } else {
+            null
+        }
+    }*/
+
+    // Deduct balance from the card
+    suspend fun deductBalance(cardNumber: String, newBalance: Double): Boolean {
+        return try {
+            val querySnapshot = db.collection("cards").whereEqualTo("card", cardNumber).get().await()
+            val document = querySnapshot.documents.firstOrNull()
+
+            if (document != null) {
+                document.reference.update("balance", newBalance).await()
+                true // Update was successful
+            } else {
+                false // Card not found
+            }
+        } catch (e: Exception) {
+            false // An error occurred
+        }
+    }
+
+    suspend fun saveOrder(order: Order) {
+        db.collection("orders")
+            .add(order)
+            .addOnSuccessListener {
+                Log.d("Firestore", "Order saved successfully")
+            }
+            .addOnFailureListener { e ->
+                Log.e("Firestore", "Error saving order", e)
+            }
     }
 }

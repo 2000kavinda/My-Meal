@@ -189,7 +189,7 @@ fun main() = application {
             width = 1280.dp,
             height = 720.dp
         )
-    ) {
+    ) {/*
         val client = createHttpClient(CIO) // Assume this client is configured for HTTP calls if needed
         val repository = FirestoreRepository() // Firestore repository to interact with Firestore
         val authService = AuthService(repository) // Assuming AuthService is for handling authentication
@@ -222,7 +222,8 @@ fun main() = application {
                 val price = backStackEntry.arguments?.getString("price") ?: "0.0"
                 MealDetailsScreen(name = name, photo = photo, price = price)
             }
-        }
+        }*/
+        App()
     }
 }
 

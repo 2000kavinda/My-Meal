@@ -32,6 +32,7 @@ kotlin {
             implementation(project.dependencies.platform(libs.android.firebase.bom))
             implementation(libs.gitlive.firebase.firestore)
             implementation(libs.ktor.client.okhttp)
+
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -53,6 +54,7 @@ kotlin {
             //implementation(libs.navigation.compose)
             implementation("org.jetbrains.androidx.navigation:navigation-compose:2.7.0-alpha07")
             implementation("io.coil-kt.coil3:coil-compose:3.0.0-alpha06")
+
 
 
         }
