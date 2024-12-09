@@ -21,11 +21,11 @@ import androidx.compose.ui.text.input.VisualTransformation
 fun SaveUserScreen(
     isLoading: Boolean,
     message: String,
-    onSave: (String, String) -> Unit
+    onSave: (String, String, () -> Unit) -> Unit // Updated to match expected callback signature
 ) {
     var email by remember { mutableStateOf(TextFieldValue("")) }
     var password by remember { mutableStateOf(TextFieldValue("")) }
-    var isPasswordVisible by remember { mutableStateOf(false) } // Track visibility of password
+    var isPasswordVisible by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -39,18 +39,17 @@ fun SaveUserScreen(
             onValueChange = { email = it },
             label = { Text("Email") },
             modifier = Modifier.fillMaxWidth(),
-            enabled = !isLoading // Disable input when loading
+            enabled = !isLoading
         )
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Password text field with eye icon for toggling visibility
         TextField(
             value = password,
             onValueChange = { password = it },
             label = { Text("Password") },
             visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             modifier = Modifier.fillMaxWidth(),
-            enabled = !isLoading, // Disable input when loading
+            enabled = !isLoading,
             trailingIcon = {
                 IconButton(onClick = { isPasswordVisible = !isPasswordVisible }) {
                     Icon(
@@ -72,21 +71,23 @@ fun SaveUserScreen(
             Button(
                 onClick = {
                     if (email.text.isNotBlank() && password.text.isNotBlank()) {
-                        onSave(email.text, password.text)
+                        onSave(email.text, password.text) {
+                            // Navigate after successful save
+                            // Assuming you handle navigation inside the onSave callback
+                        }
                     }
                 },
                 modifier = Modifier.fillMaxWidth(),
-                enabled = !isLoading // Disable button when loading
+                enabled = !isLoading
             ) {
                 Text("Save User")
             }
         }
 
-        // Show the message at the bottom of the UI
         if (message.isNotBlank()) {
             Text(
                 text = message,
-                color = if (message.contains("Error")) Color.Red else Color.Green, // Red for error, green for success
+                color = if (message.contains("Error")) Color.Red else Color.Green,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 16.dp),

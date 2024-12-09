@@ -4,7 +4,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 class NavigationManager {
-    private val _currentScreen = MutableStateFlow<Screen>(Screen.MealList)
+    private val _currentScreen = MutableStateFlow<Screen>(Screen.SignIn) // Default screen is SignIn
     val currentScreen: StateFlow<Screen> = _currentScreen
 
     fun navigateTo(screen: Screen) {
@@ -12,6 +12,11 @@ class NavigationManager {
     }
 
     fun navigateBack() {
-        // Implement back navigation logic if needed
+        // Example back navigation logic
+        if (_currentScreen.value is Screen.MealDetails) {
+            _currentScreen.value = Screen.MealList
+        } else if (_currentScreen.value is Screen.SaveUser) {
+            _currentScreen.value = Screen.SignIn
+        }
     }
 }

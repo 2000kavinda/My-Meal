@@ -4,6 +4,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,7 +33,7 @@ data class HealthMetrics(
 )
 
 @Composable
-fun MealDetailsScreen(meal: Meal, onBack: () -> Unit) {
+fun MealDetailsScreen(meal: Meal,sharedViewModel: SharedViewModel, onBack: () -> Unit) {
     val nutritionRepository = remember { NutritionRepository() }
     val firestoreRepository = remember { FirestoreRepository() }
     val httpClient = remember { HttpClient() }
@@ -44,6 +47,7 @@ fun MealDetailsScreen(meal: Meal, onBack: () -> Unit) {
     var showCardDetailsDialog by remember { mutableStateOf(false) } // State to control the dialog visibility
 
     val coroutineScope = rememberCoroutineScope()
+    val currentUserEmail by sharedViewModel.currentUserEmail.collectAsState()
 
     LaunchedEffect(Unit) {
         coroutineScope.launch {
@@ -81,10 +85,10 @@ fun MealDetailsScreen(meal: Meal, onBack: () -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Meal Details") },
+                title = { Text("Meal Details, $currentUserEmail") },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        //Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 }
             )

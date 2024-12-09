@@ -1,23 +1,26 @@
 package org.myapp.mymeal
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
+import AuthService
+import androidx.compose.runtime.Composable
 import org.jetbrains.compose.resources.painterResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
-
-import mymeal.composeapp.generated.resources.Res
-import mymeal.composeapp.generated.resources.compose_multiplatform
 
 @Composable
 fun App() {
+    // Initialize FirestoreRepository and AuthService
+    val repository = FirestoreRepository()
+    val authService = AuthService(repository)
+
+    // Initialize the shared state holder (SharedViewModel)
+    val sharedViewModel = SharedViewModel()
+
+    // Get the navigation manager from the provider
     val navigationManager = NavigationProvider.navigationManager
-    NavigationHost(navigationManager)
+
+    // Pass the navigation manager, authService, firestoreRepository, and sharedViewModel to the NavigationHost
+    NavigationHost(
+        navigationManager = navigationManager,
+        authService = authService,  // Pass AuthService for authentication handling
+        firestoreRepository = repository, // Pass FirestoreRepository for saving users
+        sharedViewModel = sharedViewModel // Pass SharedViewModel for sharing state
+    )
 }
