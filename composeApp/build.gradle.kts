@@ -20,18 +20,19 @@ kotlin {
             jvmTarget.set(JvmTarget.JVM_11)
         }
     }
-    
+
     jvm("desktop")
-    
+
     sourceSets {
         val desktopMain by getting
-        
+
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
             implementation(project.dependencies.platform(libs.android.firebase.bom))
             implementation(libs.gitlive.firebase.firestore)
             implementation(libs.ktor.client.okhttp)
+            implementation("androidx.activity:activity-compose:1.7.2")
 
         }
         commonMain.dependencies {
@@ -66,6 +67,7 @@ kotlin {
             implementation(libs.ktor.client.okhttp)
             implementation("io.ktor:ktor-client-core:2.3.4")
             implementation("io.ktor:ktor-client-cio:2.3.4")
+            implementation(compose.desktop.currentOs)
         }
     }
 }

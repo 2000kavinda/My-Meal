@@ -1,6 +1,7 @@
 package org.myapp.mymeal
 
 import AuthService
+import GameScreen
 import MealService
 
 import com.google.firebase.FirebasePlatform
@@ -223,7 +224,9 @@ fun main() = application {
                 MealDetailsScreen(name = name, photo = photo, price = price)
             }
         }*/
-        App()
+        //App()
+        //GameScreen()
+        PlatformImagePicker()
     }
 }
 
