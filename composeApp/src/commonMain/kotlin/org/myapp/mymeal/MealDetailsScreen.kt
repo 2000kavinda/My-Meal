@@ -59,8 +59,10 @@ fun MealDetailsScreen(meal: Meal,sharedViewModel: SharedViewModel, onBack: () ->
                 // Fetch all orders for the given email
                 val meals = firestoreRepository.fetchNutritionData("kavindaudara75@gmail.com")
 
+                val dayCount = firestoreRepository.fetchUniqueDateCountExcludingToday("kavindaudara75@gmail.com")
+
                 // Calculate the health metrics based on the fetched meals and nutrition data
-                healthMetrics = calculateHealthMetrics(meals, nutritionData)
+                healthMetrics = calculateHealthMetrics(meals, nutritionData,dayCount)
 
             } catch (e: Exception) {
                 errorMessage = "Error fetching data: ${e.message}"
@@ -310,7 +312,7 @@ fun AIResponseDisplay(apiResponse: String) {
 
 
 suspend fun callOpenAIAPI(httpClient: HttpClient, healthStatus: String): String {
-    val apiKey = "sk-proj-gMJ2i6pc81rlfAZD9rnKT3BlbkFJic8JE5LUhTfmF45JMhi5" // Replace with your API key
+    val apiKey = "sk-proj-gMJ2i6pc81rlfAZD9rnKT3BlbkFJic8JE5LUhTfmF45JMhi555" // Replace with your API key
     val apiUrl = "https://api.openai.com/v1/chat/completions"
 
     val requestBody = """
@@ -347,7 +349,7 @@ suspend fun callOpenAIAPI(httpClient: HttpClient, healthStatus: String): String 
 }
 
 
-fun calculateHealthMetrics(meals: List<Order>, nutritionData: NutritionResponse?): HealthMetrics {
+fun calculateHealthMetrics(meals: List<Order>, nutritionData: NutritionResponse?,dayCount: Int): HealthMetrics {
     var totalCalories = 0.0
     var totalCarbs = 0.0
     var totalProteins = 0.0
@@ -367,23 +369,23 @@ fun calculateHealthMetrics(meals: List<Order>, nutritionData: NutritionResponse?
         totalFats += nutritionItem.fat_total_g
     }
 
-    val carbPercentage = (totalCarbs * 4 / totalCalories) * 100
-    val proteinPercentage = (totalProteins * 4 / totalCalories) * 100
-    val fatPercentage = (totalFats * 9 / totalCalories) * 100
+    val carbAverage = (totalCarbs) / (dayCount+1)
+    val proteinAverage = (totalProteins ) / (dayCount+1)
+    val fatAverage = (totalFats) / (dayCount+1)
 
     val healthStatus = when {
         totalCalories > 2000.0 -> "Unhealthy: High Calorie Intake"
-        carbPercentage > 50.0 -> "Unhealthy: High Carbohydrate Intake"
-        proteinPercentage < 30.0 -> "Unhealthy: Low Protein Intake"
-        fatPercentage > 20.0 -> "Unhealthy: High Fat Intake"
+        carbAverage > 50.0 -> "Unhealthy: High Carbohydrate Intake"
+        proteinAverage < 30.0 -> "Unhealthy: Low Protein Intake"
+        fatAverage > 20.0 -> "Unhealthy: High Fat Intake"
         else -> "Healthy"
     }
 
     return HealthMetrics(
         totalCalories = totalCalories,
-        carbPercentage = carbPercentage,
-        proteinPercentage = proteinPercentage,
-        fatPercentage = fatPercentage,
+        carbPercentage = carbAverage,
+        proteinPercentage = proteinAverage,
+        fatPercentage = fatAverage,
         healthStatus = healthStatus
     )
 }

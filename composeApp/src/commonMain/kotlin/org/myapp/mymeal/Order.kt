@@ -8,5 +8,6 @@ data class Order(
     val fats: Double = 0.0,
     val price: Double = 0.0,
     val photo: String = "",
-    val email: String = ""
+    val email: String = "",
+    val day: String = "",
 )

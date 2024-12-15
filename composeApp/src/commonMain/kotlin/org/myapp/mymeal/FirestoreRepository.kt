@@ -3,6 +3,7 @@ package org.myapp.mymeal
 import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
+import java.time.LocalDate
 
 class FirestoreRepository {
 
@@ -139,4 +140,26 @@ class FirestoreRepository {
                 Log.e("Firestore", "Error saving order", e)
             }
     }
+
+
+
+
+    suspend fun fetchUniqueDateCountExcludingToday(email: String): Int {
+        val today = LocalDate.now().toString() // Get today's date in the format "yyyy-MM-dd"
+
+        val snapshot = db.collection("orders")
+            .whereEqualTo("email", email)
+            .get()
+            .await()
+
+        // Extract the `day` field, filter out today's date, and count unique days
+        val uniqueDates = snapshot.documents.mapNotNull { doc ->
+            doc.getString("day") // Extract the 'day' field as a String
+        }.filter { day ->
+            day != today // Exclude today's date
+        }.toSet() // Use a Set to ensure only unique days are considered
+
+        return uniqueDates.size // Return the count of unique days excluding today
+    }
+
 }

@@ -224,9 +224,9 @@ fun main() = application {
                 MealDetailsScreen(name = name, photo = photo, price = price)
             }
         }*/
-        //App()
+        App()
         //GameScreen()
-        PlatformImagePicker()
+        //PlatformImagePicker()
     }
 }
 
