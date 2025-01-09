@@ -8,10 +8,11 @@ import org.jetbrains.compose.resources.painterResource
 fun App() {
     // Initialize FirestoreRepository and AuthService
     val repository = FirestoreRepository()
-    val authService = AuthService(repository)
-
     // Initialize the shared state holder (SharedViewModel)
     val sharedViewModel = SharedViewModel()
+    val authService = AuthService(repository, sharedViewModel)
+
+
 
     // Get the navigation manager from the provider
     val navigationManager = NavigationProvider.navigationManager

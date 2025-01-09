@@ -19,6 +19,8 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
+import org.myapp.mymeal.NavigationProvider.navigationManager
+import org.myapp.mymeal.Screen
 import org.myapp.mymeal.analyzeImages
 import java.awt.FileDialog
 import java.awt.Frame
@@ -35,7 +37,7 @@ fun InitialScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFCB823D)), // Correct orange background color
+            .background(Color(0xFFCBD5ED)), // Correct orange background color
         contentAlignment = Alignment.Center
     ) {
         // Centered rounded rectangle
@@ -43,7 +45,7 @@ fun InitialScreen(
             modifier = Modifier
                 .fillMaxWidth(0.85f) // White box width (85% of screen width)
                 .fillMaxHeight(0.75f) // White box height (75% of screen height)
-                .background(Color.White, shape = RoundedCornerShape(32.dp)) // White rounded rectangle
+                .background(Color.White, shape = RoundedCornerShape(24.dp)) // White rounded rectangle
                 .padding(16.dp), // Inner padding inside the rectangle
             contentAlignment = Alignment.TopCenter
         ) {
@@ -71,10 +73,10 @@ fun InitialScreen(
                         .height(70.dp) // Set button height
                         .padding(8.dp), // Add padding around the button
                     colors = ButtonDefaults.buttonColors(
-                        backgroundColor = Color(0xFFCB823D) // Set button background color (HEX: #FF0000 - Red)
+                        backgroundColor = Color(0xFF002945) // Set button background color (HEX: #FF0000 - Red)
                     ),
                     shape = MaterialTheme.shapes.medium.copy(
-                        CornerSize(10.dp) // Set border radius to 20.dp
+                        CornerSize(12.dp) // Set border radius to 20.dp
                     ),
                     //border = BorderStroke(2.dp, Color.Blue) // Set border with color blue
                 ) {
@@ -100,7 +102,9 @@ fun InitialScreen(
 
 
                 Button(
-                    onClick = onPickImage,
+                    onClick={
+                        navigationManager.navigateTo(Screen.MealList)
+                    },
                     modifier = Modifier
                         .fillMaxWidth(0.5f) // Set button width
                         .height(70.dp) // Set button height
@@ -109,9 +113,9 @@ fun InitialScreen(
                         backgroundColor = Color(0xFFFFFFFF) // Set button background color (HEX: #FF0000 - Red)
                     ),
                     shape = MaterialTheme.shapes.medium.copy(
-                        CornerSize(10.dp) // Set border radius to 20.dp
+                        CornerSize(12.dp) // Set border radius to 20.dp
                     ),
-                    border = BorderStroke(2.dp, Color(0xFFCB823D)) // Set border with color blue
+                    border = BorderStroke(2.dp, Color(0xFF002945)) // Set border with color blue
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
@@ -125,7 +129,7 @@ fun InitialScreen(
                         )*/
                         Text(
                             "Skip for Now",
-                            color = Color(0xFFCB823D), // Set text color
+                            color = Color(0xFF002945), // Set text color
                             //fontWeight = FontWeight.Bold, // Bold the text
                             fontSize = 18.sp // Adjust text size
                         )
@@ -164,7 +168,7 @@ fun ImagePickerUI(
     onBack: () -> Unit,
     analysisResult: String?,
     isLoading: Boolean
-) {val topAppBarColor = Color(0xFFCB823D)  // Example hex color for the app bar (Purple)
+) {val topAppBarColor = Color(0xFF002945)  // Example hex color for the app bar (Purple)
     val backgroundColor = Color(0xFFFFFFFF)
     Scaffold(
         topBar = {
@@ -217,7 +221,7 @@ fun ImagePickerUI(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 if (isLoading) {
-                    CircularProgressIndicator(modifier = Modifier.padding(16.dp),color = Color(0xFFCB823D))
+                    CircularProgressIndicator(modifier = Modifier.padding(16.dp),color = Color(0xFF002945))
                 } else {
                     // Card for Nutritional Information
                     Card(
@@ -272,13 +276,15 @@ fun ImagePickerUI(
 
                     Spacer(modifier = Modifier.height(32.dp))
                     Button(
-                        onClick = onBack,
+                        onClick={
+                            navigationManager.navigateTo(Screen.MealList)
+                        },
                         modifier = Modifier
                             .fillMaxWidth() // Ensure the button fills the available width
                             .height(70.dp)
                             .padding(8.dp),
                         colors = ButtonDefaults.buttonColors(
-                            backgroundColor = Color(0xFFCB823D) // Set button background color (HEX: #FF0000 - Red)
+                            backgroundColor = Color(0xFF002945) // Set button background color (HEX: #FF0000 - Red)
                         ),
                         shape = MaterialTheme.shapes.medium.copy(
                             CornerSize(10.dp) // Set border radius to 20.dp
@@ -310,7 +316,7 @@ fun parseAnalysisResult(result: String?): List<Pair<String, String>> {
         }
 }
 
-
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun DesktopImagePicker() {
     var selectedImage by remember { mutableStateOf<ImageBitmap?>(null) }

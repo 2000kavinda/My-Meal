@@ -1,5 +1,7 @@
 package org.myapp.mymeal
 
+import jdk.jfr.Description
+
 data class Order(
     val name: String = "",
     val calories: Double = 0.0,
@@ -10,4 +12,7 @@ data class Order(
     val photo: String = "",
     val email: String = "",
     val day: String = "",
+    val description: String = "",
+    val type: String = "",
+
 )

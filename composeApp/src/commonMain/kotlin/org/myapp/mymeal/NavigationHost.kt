@@ -31,26 +31,45 @@ fun NavigationHost(
             onSignIn = { email, password ->
                 // Implement the SignIn logic if needed
                 // Navigate to SaveUserScreen after successful sign-in (if needed)
-                navigationManager.navigateTo(Screen.MealList)
+                navigationManager.navigateTo(Screen.PlatformImagePicker)
             },
             sharedViewModel = sharedViewModel,
         )
         is Screen.SaveUser -> SaveUserScreen(
             isLoading = false,
             message = "",
-            onSave = { email, password, onSuccess ->
+            onSave = { email, password,gender, activityLevel,  goal ,onSuccess ->
                 // Call firestoreRepository to add the user
-                onSaveUser(email, password, firestoreRepository, onSuccess,sharedViewModel, navigationManager)
+                onSaveUser(email, password, gender, activityLevel, goal, firestoreRepository, onSuccess,sharedViewModel, navigationManager)
             }
         )
         is Screen.MealList -> MealListScreen(
             repository = firestoreRepository,
             onMealClick = { meal ->
                 navigationManager.navigateTo(Screen.MealDetails(meal))
+                //navigationManager.navigateTo(Screen.ProfileScreen(meal))
             }
         )
+        is Screen.History -> HistoryScreen(
+        repository = firestoreRepository,
+        onMealClick = { meal ->
+            navigationManager.navigateTo(Screen.MealDetails(meal))
+            //navigationManager.navigateTo(Screen.ProfileScreen(meal))
+        }
+    )
+        is Screen.ImagePickerUI -> ImagePickerUI(
+            onPickImage = { /* Your logic to pick an image */ },
+            imageBitmap = null // Pass the appropriate ImageBitmap or state here
+        )
+        is Screen.PlatformImagePicker -> PlatformImagePicker()
+
         is Screen.MealDetails -> MealDetailsScreen(
             meal = (currentScreen as Screen.MealDetails).meal,
+            sharedViewModel = sharedViewModel,
+            onBack = { navigationManager.navigateBack() }
+        )
+        is Screen.ProfileScreen -> ProfileScreen(
+            meal = (currentScreen as Screen.ProfileScreen).meal,
             sharedViewModel = sharedViewModel,
             onBack = { navigationManager.navigateBack() }
         )
@@ -60,6 +79,9 @@ fun NavigationHost(
 fun onSaveUser(
     email: String,
     password: String,
+    gender: String,
+    activityLevel: String,
+    goal: String,
     firestoreRepository: FirestoreRepository,
     onSuccess: () -> Unit,
     sharedViewModel: SharedViewModel,
@@ -71,7 +93,7 @@ fun onSaveUser(
             val hashedBytes = messageDigest.digest(password.toByteArray())
             val encryptedPassword= hashedBytes.joinToString("") { "%02x".format(it) }
             //val encryptedPassword = encryptPassword(password)
-            val user = User(email, encryptedPassword)
+            val user = User(email, encryptedPassword, gender, activityLevel, goal)
             val result = firestoreRepository.addUser(user)
 
             if (result.isSuccess) {

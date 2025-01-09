@@ -275,7 +275,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             //GameScreen()
             PlatformImagePicker()
-            //App()
+            App()
         }
     }
 }

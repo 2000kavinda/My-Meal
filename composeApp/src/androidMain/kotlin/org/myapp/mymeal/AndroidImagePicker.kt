@@ -8,7 +8,9 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CornerSize
+import androidx.compose.foundation.verticalScroll
 //import androidx.compose.foundation.layout.ColumnScopeInstance.weight
 import androidx.compose.ui.res.painterResource
 import androidx.compose.material.*
@@ -42,6 +44,7 @@ import kotlinx.serialization.json.doubleOrNull
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import org.jetbrains.compose.resources.painterResource
+import org.myapp.mymeal.NavigationProvider.navigationManager
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
 
@@ -117,10 +120,10 @@ fun CenterLogoUI(onPickImage: () -> Unit) {
                 .height(70.dp) // Set button height
                 .padding(8.dp), // Add padding around the button
             colors = ButtonDefaults.buttonColors(
-                backgroundColor = Color(0xFFCB823D) // Set button background color (HEX: #FF0000 - Red)
+                backgroundColor = Color(0xFF002945) // Set button background color (HEX: #FF0000 - Red)
             ),
             shape = MaterialTheme.shapes.medium.copy(
-                CornerSize(10.dp) // Set border radius to 20.dp
+                CornerSize(12.dp) // Set border radius to 20.dp
             ),
             //border = BorderStroke(2.dp, Color.Blue) // Set border with color blue
         ) {
@@ -146,7 +149,9 @@ fun CenterLogoUI(onPickImage: () -> Unit) {
 
 
         Button(
-            onClick = onPickImage,
+            onClick={
+                navigationManager.navigateTo(Screen.MealList)
+            },
             modifier = Modifier
                 .width((screenWidthDp * 0.8).dp) // Set button width
                 .height(70.dp) // Set button height
@@ -155,9 +160,9 @@ fun CenterLogoUI(onPickImage: () -> Unit) {
                 backgroundColor = Color(0xFFFFFFFF) // Set button background color (HEX: #FF0000 - Red)
             ),
             shape = MaterialTheme.shapes.medium.copy(
-                CornerSize(10.dp) // Set border radius to 20.dp
+                CornerSize(12.dp) // Set border radius to 20.dp
             ),
-            border = BorderStroke(2.dp, Color(0xFFCB823D)) // Set border with color blue
+            border = BorderStroke(2.dp, Color(0xFF002945)) // Set border with color blue
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -171,7 +176,7 @@ fun CenterLogoUI(onPickImage: () -> Unit) {
                 )*/
                 Text(
                     "Skip for Now",
-                    color = Color(0xFFCB823D), // Set text color
+                    color = Color(0xFF002945), // Set text color
                     //fontWeight = FontWeight.Bold, // Bold the text
                     fontSize = 18.sp // Adjust text size
                 )
@@ -190,7 +195,7 @@ fun ImagePickerUI(
     isLoading: Boolean,
     onBack: () -> Unit,
 ) {
-    val topAppBarColor = Color(0xFFCB823D)  // Example hex color for the app bar (Purple)
+    val topAppBarColor = Color(0xFF002945)  // Example hex color for the app bar (Purple)
     val backgroundColor = Color(0xFFFFFFFF) // Example hex color for the background (Light Grey)
     val configuration = LocalConfiguration.current
     val screenWidthDp = configuration.screenWidthDp
@@ -218,7 +223,8 @@ fun ImagePickerUI(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues),
+                .padding(paddingValues)
+                .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
@@ -227,14 +233,16 @@ fun ImagePickerUI(
                 Image(
                     bitmap = it,
                     contentDescription = null,
-                    modifier = Modifier.size(250.dp).padding(16.dp)
+                    modifier = Modifier
+                        .size(250.dp)
+                        .padding(16.dp)
                 )
                 Spacer(modifier = Modifier.height(16.dp))
             }
 
             // Nutritional Info Display and Loading Indicator
             if (isLoading) {
-                CircularProgressIndicator(color = Color(0xFFCB823D))
+                CircularProgressIndicator(color = Color(0xFF002945))
             } else if (nutritionalInfo.isNotEmpty()) {
                 // Nutritional Info Card
                 Card(
@@ -272,31 +280,37 @@ fun ImagePickerUI(
             Spacer(modifier = Modifier.weight(1f))
 
             // Button to pick an image
-            Button(
-                onClick = onPickImage,
-                modifier = Modifier
-                    .width((screenWidthDp * 1).dp) // Set button width
-                    .height(70.dp) // Set button height
-                    .padding(8.dp), // Add padding around the button
-                colors = ButtonDefaults.buttonColors(
-                    backgroundColor = Color(0xFFCB823D) // Set button background color (HEX: #FF0000 - Red)
-                ),
-                shape = MaterialTheme.shapes.medium.copy(
-                    CornerSize(10.dp) // Set border radius to 20.dp
-                ),
-                //border = BorderStroke(2.dp, Color.Blue) // Set border with color blue
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(16.dp) // Space between icon and text
+            if (isLoading) {
+                //CircularProgressIndicator(color = Color(0xFF002945))
+            } else if (nutritionalInfo.isNotEmpty()) {
+                Button(
+                    onClick = {
+                        navigationManager.navigateTo(Screen.MealList)
+                    },
+                    modifier = Modifier
+                        .width((screenWidthDp * 1).dp) // Set button width
+                        .height(70.dp) // Set button height
+                        .padding(8.dp), // Add padding around the button
+                    colors = ButtonDefaults.buttonColors(
+                        backgroundColor = Color(0xFF002945) // Set button background color (HEX: #FF0000 - Red)
+                    ),
+                    shape = MaterialTheme.shapes.medium.copy(
+                        CornerSize(10.dp) // Set border radius to 20.dp
+                    ),
+                    //border = BorderStroke(2.dp, Color.Blue) // Set border with color blue
                 ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(16.dp) // Space between icon and text
+                    ) {
 
-                    Text(
-                        "Home",
-                        color = Color.White, // Set text color
-                        //fontWeight = FontWeight.Bold, // Bold the text
-                        fontSize = 18.sp // Adjust text size
-                    )
+                        Text(
+                            "Home",
+                            color = Color.White, // Set text color
+                            //fontWeight = FontWeight.Bold, // Bold the text
+                            fontSize = 18.sp // Adjust text size
+                        )
+                    }
                 }
             }
         }

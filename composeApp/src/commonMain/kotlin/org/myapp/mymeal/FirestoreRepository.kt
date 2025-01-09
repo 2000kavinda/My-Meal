@@ -65,6 +65,30 @@ class FirestoreRepository {
         }
     }
 
+    suspend fun getMealsByNamesg(mealNames: List<String>): List<Meal> {
+        return try {
+            // Fetch meals from Firestore where the name is in the provided list
+            val snapshot = db.collection("meals")
+                .whereIn("name", mealNames)
+                .get()
+                .await()
+
+            // Map the snapshot to a list of Meal objects
+            snapshot.documents.map { document ->
+                val name = document.getString("name") ?: "Unknown" // Default to "Unknown" if name is missing
+                val photo = document.getString("photo") ?: "" // Default to empty string if photo is missing
+                val price = document.getDouble("price") ?: 0.0 // Default to 0.0 if price is missing
+                val description = document.getString("description") ?: "Unknown" // Default to "Unknown" if description is missing
+                val type = document.getString("type") ?: "Unknown" // Default to "Unknown" if type is missing
+                Meal(name, photo, price, description, type)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace() // Print the error for debugging purposes
+            emptyList() // Return an empty list if there's an error
+        }
+    }
+
+
     suspend fun getMeals(): List<Meal> {
         return try {
             // Fetch meals collection from Firestore
@@ -75,7 +99,32 @@ class FirestoreRepository {
                 val name = document.getString("name") ?: "Unknown" // Default to "Unknown" if name is missing
                 val photo = document.getString("photo") ?: "" // Default to empty string if photo is missing
                 val price = document.getDouble("price") ?: 0.0 // Default to 0.0 if price is missing
-                Meal(name, photo, price)
+                val description = document.getString("description") ?: "Unknown"
+                val type = document.getString("type") ?: "Unknown"
+                Meal(name, photo, price,description,type)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace() // Print the error for debugging purposes
+            emptyList() // Return an empty list if there's an error
+        }
+    }
+
+    suspend fun getOrders(email: String): List<Meal> {
+        return try {
+            // Fetch meals collection from Firestore filtered by email
+            val snapshot = db.collection("orders")
+                .whereEqualTo("email", email) // Filter by email
+                .get()
+                .await()
+
+            // Map the snapshot to a list of Meal objects
+            snapshot.documents.map { document ->
+                val name = document.getString("name") ?: "Unknown" // Default to "Unknown" if name is missing
+                val photo = document.getString("photo") ?: "" // Default to empty string if photo is missing
+                val price = document.getDouble("price") ?: 0.0 // Default to 0.0 if price is missing
+                val description = document.getString("description") ?: "Unknown"
+                val type = document.getString("type") ?: "Unknown"
+                Meal(name, photo, price, description, type)
             }
         } catch (e: Exception) {
             e.printStackTrace() // Print the error for debugging purposes
@@ -112,6 +161,17 @@ class FirestoreRepository {
             null
         }
     }*/
+
+    suspend fun fetchCoinCount(email: String): Double? {
+        return try {
+            val document = db.collection("coins").whereEqualTo("email", email).get().await()
+            document.documents.firstOrNull()?.getDouble("count")
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+
 
     // Deduct balance from the card
     suspend fun deductBalance(cardNumber: String, newBalance: Double): Boolean {

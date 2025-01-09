@@ -27,11 +27,10 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
-import org.myapp.mymeal.NavigationProvider.navigationManager
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun MealListScreen(
+fun HistoryScreen(
     repository: FirestoreRepository,
     onMealClick: (Meal) -> Unit,
 ) {
@@ -52,22 +51,13 @@ fun MealListScreen(
     // State for Bottom Navigation Bar
     val selectedItem = remember { mutableStateOf(0) }
 
-    var meal = Meal(
-        name = "Default Meal",
-        photo = "https://example.com/default-photo.jpg",
-        price = 0.0,
-        description = "Default description",
-        type = "Default type"
-    )
-
-
     // State for showing the AI recommendations popup dialog
     var showAIPopup by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         try {
             isLoading = true
-            meals = repository.getMeals()
+            meals = repository.getOrders("kavindaudara75@gmail.com")
             filteredMeals = meals
             errorMessage = if (meals.isEmpty()) "No meals found" else ""
 
@@ -101,35 +91,7 @@ fun MealListScreen(
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            healthMetrics?.let { metrics ->
-                HealthMetricsCard(metrics = metrics, coins = coins)
-                Spacer(modifier = Modifier.height(16.dp))
-            }
 
-            if (aiRecommendations.isNotEmpty()) {
-                // Show the AI recommendations popup dialog
-                showAIPopup = true
-            } else if (isLoading) {
-                Text("Loading AI recommendations...", style = MaterialTheme.typography.body2)
-                Spacer(modifier = Modifier.height(16.dp))
-            }
-
-            TextField(
-                value = searchQuery,
-                onValueChange = { query ->
-                    searchQuery = query
-                    filteredMeals = if (query.isEmpty()) {
-                        meals
-                    } else {
-                        meals.filter { it.name.contains(query, ignoreCase = true) }
-                    }
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 8.dp),
-                placeholder = { Text(text = "Search meals...") },
-                singleLine = true
-            )
 
             if (isLoading) {
                 CircularProgressIndicator()
@@ -142,7 +104,7 @@ fun MealListScreen(
                         .padding(8.dp),
                 ) {
                     filteredMeals.forEach { meal ->
-                        MealCard(meal = meal, onMealClick = onMealClick)
+                        MealCard1(meal = meal, onMealClick = onMealClick)
                     }
                 }
             }
@@ -173,9 +135,7 @@ fun MealListScreen(
             BottomNavigationItem(
                 icon = { Icon(Icons.Filled.AccountCircle, contentDescription = "Profile") },
                 selected = selectedItem.value == 3,
-                onClick={
-                    navigationManager.navigateTo(Screen.ProfileScreen(meal=meal))
-                },
+                onClick = { selectedItem.value = 3 }
             )
         }
     }
@@ -200,50 +160,10 @@ fun MealListScreen(
 
 
 
-@Composable
-fun AIRecommendationsCard(aiRecommendations: String) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp),
-        elevation = 4.dp
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(
-                text = "AI Recommendations",
-                fontWeight = FontWeight.Bold,
-                style = MaterialTheme.typography.h6
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(text = aiRecommendations)
-        }
-    }
-}
+
 
 @Composable
-fun HealthMetricsCard(metrics: HealthMetrics, coins: Double) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp),
-        elevation = 4.dp
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(text = "Health Status", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.h6)
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(text = "Coins Earned: $coins")
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = "Overall Health: ${metrics.healthStatus}",
-                fontWeight = FontWeight.Bold,
-            )
-        }
-    }
-}
-
-@Composable
-fun MealCard(meal: Meal, onMealClick: (Meal) -> Unit) {
+fun MealCard1(meal: Meal, onMealClick: (Meal) -> Unit) {
     Card(
         modifier = Modifier
             .width(550.dp)
@@ -251,50 +171,47 @@ fun MealCard(meal: Meal, onMealClick: (Meal) -> Unit) {
             .clickable { onMealClick(meal) },
         elevation = 4.dp
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // First Column: Meal Image
             AsyncImage(
                 model = meal.photo,
                 contentDescription = "Meal Image",
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp)
+                    .size(100.dp) // Set a fixed size for the image
             )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(text = "Meal: ${meal.name}", fontWeight = FontWeight.Bold)
-            Text(text = "Type: ${meal.type}", fontWeight = FontWeight.Bold)
-            Text(text = "Price: $${meal.price}")
+
+            // Spacer between columns
+            Spacer(modifier = Modifier.width(16.dp))
+
+            // Second Column: Text Details
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(text = "Meal: ${meal.name}", fontWeight = FontWeight.Bold)
+                Text(text = "Type: ${meal.type}", fontWeight = FontWeight.Bold)
+                Text(text = "Price: $${meal.price}")
+            }
+
+            // Spacer between columns
+            Spacer(modifier = Modifier.width(16.dp))
+
+            // Third Column: Reorder Button
+            Button(
+                onClick = { /* Handle reorder logic here */ },
+                modifier = Modifier
+                    .width(100.dp)
+                    .height(40.dp)
+            ) {
+                Text(text = "Reorder")
+            }
         }
     }
 }
 
-suspend fun callOpenAIAPIX(httpClient: HttpClient, healthStatus: String): List<String> {
-    val apiKey = "ssk-proj-ol3VJytWAEJXgsa5qdKxI6_0J630Oa3SqNskTBqLSJMC2eiG6zPUPUr_qHlnQebHvXU2kUHj8CT3BlbkFJMXq8Oz5vfTBEt7mXvjQcEtdFDCh_aaVlkHZTIpf1M2HwadQkLvadoJCWX4QPICGXv9z5yZkqgA" // Replace with your actual API key
-    val apiUrl = "https://api.openai.com/v1/chat/completions"
-
-    val requestBody = """
-        {
-            "model": "gpt-4",
-            "messages": [
-                {"role": "system", "content": "You are a helpful assistant."},
-                {"role": "user", "content": "Health status: $healthStatus, suggest 3 meals to eat and give only meal names as array format"}
-            ]
-        }
-    """
-
-    return try {
-        val response: HttpResponse = httpClient.post(apiUrl) {
-            header(HttpHeaders.Authorization, "Bearer $apiKey")
-            header(HttpHeaders.ContentType, ContentType.Application.Json)
-            setBody(requestBody)
-        }
-
-        val fullResponseText = response.bodyAsText()
-        val responseJson = Json.parseToJsonElement(fullResponseText)
-        val choices = responseJson.jsonObject["choices"]?.jsonArray
-        val content = choices?.get(0)?.jsonObject?.get("message")?.jsonObject?.get("content")?.jsonPrimitive?.content
-        content?.let { Json.parseToJsonElement(it).jsonArray.map { it.jsonPrimitive.content } } ?: emptyList()
-    } catch (e: Exception) {
-        println("Error: ${e.message}")
-        emptyList()
-    }
-}
