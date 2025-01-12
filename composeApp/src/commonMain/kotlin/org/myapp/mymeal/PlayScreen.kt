@@ -1,9 +1,11 @@
 package org.myapp.mymeal
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -17,6 +19,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -29,6 +32,7 @@ import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
+import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
@@ -37,7 +41,7 @@ import org.myapp.mymeal.NavigationProvider.navigationManager
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun HistoryScreen(
+fun PlayScreen(
     repository: FirestoreRepository,
     onMealClick: (Meal) -> Unit,
 ) {
@@ -91,21 +95,33 @@ fun HistoryScreen(
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            if (isLoading) {
-                CircularProgressIndicator()
-            } else if (errorMessage.isNotEmpty()) {
-                Text(text = errorMessage)
-            } else {
-                FlowRow(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp)
-                ) {
-                    filteredMeals.forEach { meal ->
-                        MealCard1(meal = meal, onMealClick = onMealClick)
-                    }
-                }
+            AsyncImage(
+                model = "https://firebasestorage.googleapis.com/v0/b/care-cost.appspot.com/o/meal%20photos%2FUntitled_design__1_-removebg.png?alt=media&token=0dacbe0d-7fa8-407a-86ab-020832fb83b8",
+                contentDescription = "Meal Image",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(400.dp)
+            )
+            //Spacer(modifier = Modifier.height(32.dp))
+
+
+            Spacer(modifier = Modifier.height(35.dp)) // Add spacing between image and button
+
+            Button(
+                onClick = {
+                    navigationManager.navigateTo(Screen.GameScreen)
+                },
+                modifier = Modifier
+                    .fillMaxWidth(0.5f)
+                    .height(48.dp),
+                shape = RoundedCornerShape(12.dp),
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF002945))
+            ) {
+
+                    Text("Play & Earn", color = Color.White)
+
             }
+
         }
 
         // Bottom Navigation Bar
@@ -184,58 +200,4 @@ fun HistoryScreen(
 
 
 
-@Composable
-fun MealCard1(meal: Meal, onMealClick: (Meal) -> Unit) {
-    Card(
-        modifier = Modifier
-            .width(600.dp)
-            .padding(8.dp)
-            .clickable { onMealClick(meal) },
-        elevation = 4.dp
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            // First Column: Meal Image
-            AsyncImage(
-                model = meal.photo,
-                contentDescription = "Meal Image",
-                modifier = Modifier
-                    .size(100.dp) // Set a fixed size for the image
-            )
-
-            // Spacer between columns
-            Spacer(modifier = Modifier.width(16.dp))
-
-            // Second Column: Text Details
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.Center
-            ) {
-                Text(text = "${meal.name}", fontWeight = FontWeight.Bold)
-                Text(text = "${meal.type}")
-                Text(text = "$${meal.price}", fontWeight = FontWeight.Bold)
-            }
-
-            // Spacer between columns
-            Spacer(modifier = Modifier.width(16.dp))
-
-            // Third Column: Reorder Button
-            Button(
-                onClick = { onMealClick(meal) },
-                colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF002945)), // Replace with your desired hex code
-                modifier = Modifier
-                    .width(100.dp)
-                    .height(40.dp)
-            ) {
-                Text(text = "Reorder", color = Color.White) // Set text color if needed
-            }
-
-        }
-    }
-}
 

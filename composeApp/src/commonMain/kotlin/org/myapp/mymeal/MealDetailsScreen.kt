@@ -8,6 +8,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
+import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBack
@@ -89,12 +90,12 @@ fun MealDetailsScreen(meal: Meal, sharedViewModel: SharedViewModel, onBack: () -
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Meal Details, $currentUserEmail") },
+                title = { Text("Meal Details", color = Color.White) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back",tint = Color.White)
                     }
-                }
+                },backgroundColor = Color(0xFF002945)
             )
         }
     ) { padding ->
@@ -253,15 +254,44 @@ fun MealAdditionalDetails(
             AIResponseDisplay(apiResponse = it)
         }
         Button(
+            onClick = {sharedViewModel.setPayAmount(meal.price)
+                onShowCardDetails()
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(48.dp),
+            shape = RoundedCornerShape(12.dp),
+            colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF002945))
+        ) {
+            Text("Pay $"+meal.price, color = Color.White, fontWeight = FontWeight.Bold)
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+        /*Button(
             onClick = {
                 sharedViewModel.setPayAmount(meal.price)
                 onShowCardDetails() },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Pay $"+meal.price)
+
+        }*/
+        Button(
+            onClick = {sharedViewModel.setPayAmount(meal.price - (coins ?: 0.0)) // This should be a separate statement
+                onShowCardDetails() // Call the function
+
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(48.dp),
+            shape = RoundedCornerShape(12.dp),
+            colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF002945))
+        ) {
+            Text(
+                text = "Pay $" + (meal.price - (coins ?: 0.0)).toString() + " + $coins Coins", color = Color.White, fontWeight = FontWeight.Bold
+            )
+            //Text("Pay $"+meal.price, color = Color.White)
         }
 
-        Button(
+        /*Button(
             onClick = {
                 sharedViewModel.setPayAmount(meal.price - (coins ?: 0.0)) // This should be a separate statement
                 onShowCardDetails() // Call the function
@@ -271,7 +301,7 @@ fun MealAdditionalDetails(
             Text(
                 text = "Pay $" + (meal.price - (coins ?: 0.0)).toString() + " + $coins Coins"
             )
-        }
+        }*/
 
     }
 
@@ -307,15 +337,23 @@ fun CardDetailsDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Enter Card Details") },
+        title = { Text("Enter Card Details",fontWeight = FontWeight.Bold ) },
+
         text = {
             Column {
+
                 OutlinedTextField(
                     value = cardNumber,
                     onValueChange = { cardNumber = it },
                     label = { Text("Card Number") },
                     modifier = Modifier.fillMaxWidth(),
-                    singleLine = true
+                    singleLine = true,shape = RoundedCornerShape(12.dp),
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = Color.Gray,
+                        unfocusedBorderColor = Color.Gray,
+                        focusedLabelColor = Color.Gray,
+                        unfocusedLabelColor = Color.Gray
+                    ),
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 OutlinedTextField(
@@ -323,7 +361,13 @@ fun CardDetailsDialog(
                     onValueChange = { expiryDate = it },
                     label = { Text("Expiry Date (MM/YY)") },
                     modifier = Modifier.fillMaxWidth(),
-                    singleLine = true
+                    singleLine = true,shape = RoundedCornerShape(12.dp),
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = Color.Gray,
+                        unfocusedBorderColor = Color.Gray,
+                        focusedLabelColor = Color.Gray,
+                        unfocusedLabelColor = Color.Gray
+                    ),
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 OutlinedTextField(
@@ -331,7 +375,14 @@ fun CardDetailsDialog(
                     onValueChange = { cvv = it },
                     label = { Text("CVV") },
                     modifier = Modifier.fillMaxWidth(),
-                    singleLine = true
+                    singleLine = true,
+                    shape = RoundedCornerShape(12.dp),
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = Color.Gray,
+                        unfocusedBorderColor = Color.Gray,
+                        focusedLabelColor = Color.Gray,
+                        unfocusedLabelColor = Color.Gray
+                    ),
                 )
                 if (paymentStatus.isNotEmpty()) {
                     Text(
@@ -389,15 +440,25 @@ fun CardDetailsDialog(
                         paymentStatus = "Card Not Found"
                     }
                 }
-            }) {
+            },colors = ButtonDefaults.buttonColors(
+                backgroundColor = Color(0xFF002945), // Replace with your desired color
+                contentColor = Color.White // Text color
+            )) {
                 Text("Submit")
             }
         },
         dismissButton = {
-            Button(onClick = onDismiss) {
+            Button(
+                onClick = onDismiss,
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = Color(0xFF002945), // Replace with your desired color
+                    contentColor = Color.White // Text color
+                )
+            ) {
                 Text("Cancel")
             }
         }
+
     )
 }
 
@@ -425,7 +486,7 @@ fun AIResponseDisplay(apiResponse: String) {
 
 
 suspend fun callOpenAIAPI(httpClient: HttpClient, healthStatus: String): String {
-    val apiKey = "ssk-proj-ol3VJytWAEJXgsa5qdKxI6_0J630Oa3SqNskTBqLSJMC2eiG6zPUPUr_qHlnQebHvXU2kUHj8CT3BlbkFJMXq8Oz5vfTBEt7mXvjQcEtdFDCh_aaVlkHZTIpf1M2HwadQkLvadoJCWX4QPICGXv9z5yZkqgA" // Replace with your API key
+    val apiKey = "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" // Replace with your API key
     val apiUrl = "https://api.openai.com/v1/chat/completions"
 
     val requestBody = """

@@ -1,6 +1,7 @@
 package org.myapp.mymeal
 
 import AuthService
+import GameScreen
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -73,6 +74,14 @@ fun NavigationHost(
             sharedViewModel = sharedViewModel,
             onBack = { navigationManager.navigateBack() }
         )
+        is Screen.PlayScreen -> PlayScreen(
+            repository = firestoreRepository,
+            onMealClick = { meal ->
+                navigationManager.navigateTo(Screen.MealDetails(meal))
+                //navigationManager.navigateTo(Screen.ProfileScreen(meal))
+            })
+        is Screen.GameScreen -> GameScreen(
+            )
     }
 }
 

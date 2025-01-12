@@ -1,32 +1,29 @@
 package org.myapp.mymeal
+
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
-import io.ktor.client.HttpClient
-import io.ktor.client.request.header
-import io.ktor.client.request.post
-import io.ktor.client.request.setBody
-import io.ktor.client.statement.HttpResponse
-import io.ktor.client.statement.bodyAsText
-import io.ktor.http.ContentType
-import io.ktor.http.HttpHeaders
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.jsonArray
-import kotlinx.serialization.json.jsonObject
-import kotlinx.serialization.json.jsonPrimitive
 import org.myapp.mymeal.NavigationProvider.navigationManager
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -35,19 +32,11 @@ fun MealListScreen(
     repository: FirestoreRepository,
     onMealClick: (Meal) -> Unit,
 ) {
-    val nutritionRepository = remember { NutritionRepository() }
-    val firestoreRepository = remember { FirestoreRepository() }
-    val httpClient = remember { HttpClient() }
-
     var meals by remember { mutableStateOf<List<Meal>>(emptyList()) }
     var filteredMeals by remember { mutableStateOf<List<Meal>>(emptyList()) }
     var searchQuery by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(true) }
     var errorMessage by remember { mutableStateOf("") }
-    var nutritionData by remember { mutableStateOf<NutritionResponse?>(null) }
-    var healthMetrics by remember { mutableStateOf<HealthMetrics?>(null) }
-    var coins by remember { mutableStateOf(0.0) }
-    var aiRecommendations by remember { mutableStateOf("") }
 
     // State for Bottom Navigation Bar
     val selectedItem = remember { mutableStateOf(0) }
@@ -60,26 +49,12 @@ fun MealListScreen(
         type = "Default type"
     )
 
-
-    // State for showing the AI recommendations popup dialog
-    var showAIPopup by remember { mutableStateOf(false) }
-
     LaunchedEffect(Unit) {
         try {
             isLoading = true
             meals = repository.getMeals()
             filteredMeals = meals
             errorMessage = if (meals.isEmpty()) "No meals found" else ""
-
-            val nutrition = firestoreRepository.fetchNutritionData("kavindaudara75@gmail.com")
-            coins = firestoreRepository.fetchCoinCount("kavindaudara75@gmail.com")!!
-            val dayCount = firestoreRepository.fetchUniqueDateCountExcludingToday("kavindaudara75@gmail.com")
-            healthMetrics = calculateHealthMetrics(nutrition, nutritionData, dayCount, "Male", "Moderate", "Maintain Weight")
-
-            healthMetrics?.let { metrics ->
-                val healthStatus = metrics.healthStatus
-                aiRecommendations = callOpenAIAPIX(httpClient, healthStatus).toString()
-            }
         } catch (e: Exception) {
             errorMessage = "Error fetching data: ${e.message}"
         } finally {
@@ -101,19 +76,6 @@ fun MealListScreen(
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            healthMetrics?.let { metrics ->
-                HealthMetricsCard(metrics = metrics, coins = coins)
-                Spacer(modifier = Modifier.height(16.dp))
-            }
-
-            if (aiRecommendations.isNotEmpty()) {
-                // Show the AI recommendations popup dialog
-                showAIPopup = true
-            } else if (isLoading) {
-                Text("Loading AI recommendations...", style = MaterialTheme.typography.body2)
-                Spacer(modifier = Modifier.height(16.dp))
-            }
-
             TextField(
                 value = searchQuery,
                 onValueChange = { query ->
@@ -126,7 +88,7 @@ fun MealListScreen(
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 8.dp),
+                    .padding(horizontal = 16.dp, vertical = 16.dp), // Added padding here
                 placeholder = { Text(text = "Search meals...") },
                 singleLine = true
             )
@@ -149,95 +111,64 @@ fun MealListScreen(
         }
 
         // Bottom Navigation Bar positioned at the bottom
-        BottomNavigation(
+        Column(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .fillMaxWidth(),
-            backgroundColor = MaterialTheme.colors.primarySurface
+                .padding(16.dp) // Added padding around the bottom navigation bar
         ) {
-            BottomNavigationItem(
-                icon = { Icon(Icons.Filled.Home, contentDescription = "Home") },
-                selected = selectedItem.value == 0,
-                onClick = { selectedItem.value = 0 }
-            )
-            BottomNavigationItem(
-                icon = { Icon(Icons.Filled.Search, contentDescription = "Search") },
-                selected = selectedItem.value == 1,
-                onClick = { selectedItem.value = 1 }
-            )
-            BottomNavigationItem(
-                icon = { Icon(Icons.Filled.Notifications, contentDescription = "Notifications") },
-                selected = selectedItem.value == 2,
-                onClick = { selectedItem.value = 2 }
-            )
-            BottomNavigationItem(
-                icon = { Icon(Icons.Filled.AccountCircle, contentDescription = "Profile") },
-                selected = selectedItem.value == 3,
-                onClick={
-                    navigationManager.navigateTo(Screen.ProfileScreen(meal=meal))
-                },
-            )
-        }
-    }
-
-    // AI Recommendations Popup Dialog
-    /*if (showAIPopup) {
-        AlertDialog(
-            onDismissRequest = { showAIPopup = false },
-            title = { Text("AI Recommendations") },
-            text = { Text(aiRecommendations) },
-            confirmButton = {
-                TextButton(
-                    onClick = { showAIPopup = false }
-                ) {
-                    Text("Dismiss")
-                }
+            BottomNavigation(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(color = Color(0xFF002945), shape = RoundedCornerShape(16.dp)), // Set background color and corner radius
+                backgroundColor = Color(0xFF002945) // Make the default background color transparent
+            ) {
+                BottomNavigationItem(
+                    icon = {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Icon(Icons.Filled.Home, contentDescription = "Home", tint = Color.White)
+                            Text("Home", color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                        }
+                    },
+                    //icon = { Icon(Icons.Filled.Home, contentDescription = "Home", tint = Color.White) }, // Set icon color to black
+                    selected = selectedItem.value == 0,
+                    onClick = { selectedItem.value = 0 }
+                )
+                BottomNavigationItem(
+                    icon = {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Icon(Icons.Filled.PlayArrow, contentDescription = "Play", tint = Color.White)
+                            Text("Play", color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                        }
+                    },
+                    //icon = { Icon(Icons.Filled.PlayArrow, contentDescription = "Search", tint = Color.White) }, // Set icon color to black
+                    selected = selectedItem.value == 1,
+                    onClick = { selectedItem.value = 1 }
+                )
+                BottomNavigationItem(
+                    icon = {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Icon(Icons.Filled.Menu, contentDescription = "History", tint = Color.White)
+                            Text("History", color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                        }
+                    },
+                   // icon = { Icon(Icons.Filled.Favorite, contentDescription = "Notifications", tint = Color.White) }, // Set icon color to black
+                    selected = selectedItem.value == 2,
+                    onClick = { selectedItem.value = 2 }
+                )
+                BottomNavigationItem(
+                    icon = {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Icon(Icons.Filled.AccountCircle, contentDescription = "Profile", tint = Color.White)
+                            Text("Profile", color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                        }
+                    },
+                   // icon = { Icon(Icons.Filled.AccountCircle, contentDescription = "Profile", tint = Color.White) }, // Set icon color to black
+                    selected = selectedItem.value == 3,
+                    onClick = {
+                        navigationManager.navigateTo(Screen.ProfileScreen(meal = meal))
+                    },
+                )
             }
-        )
-    }*/
-}
-
-
-
-
-@Composable
-fun AIRecommendationsCard(aiRecommendations: String) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp),
-        elevation = 4.dp
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(
-                text = "AI Recommendations",
-                fontWeight = FontWeight.Bold,
-                style = MaterialTheme.typography.h6
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(text = aiRecommendations)
-        }
-    }
-}
-
-@Composable
-fun HealthMetricsCard(metrics: HealthMetrics, coins: Double) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp),
-        elevation = 4.dp
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(text = "Health Status", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.h6)
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(text = "Coins Earned: $coins")
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = "Overall Health: ${metrics.healthStatus}",
-                fontWeight = FontWeight.Bold,
-            )
         }
     }
 }
@@ -246,7 +177,7 @@ fun HealthMetricsCard(metrics: HealthMetrics, coins: Double) {
 fun MealCard(meal: Meal, onMealClick: (Meal) -> Unit) {
     Card(
         modifier = Modifier
-            .width(550.dp)
+            .width(600.dp)
             .padding(8.dp)
             .clickable { onMealClick(meal) },
         elevation = 4.dp
@@ -260,41 +191,9 @@ fun MealCard(meal: Meal, onMealClick: (Meal) -> Unit) {
                     .height(200.dp)
             )
             Spacer(modifier = Modifier.height(8.dp))
-            Text(text = "Meal: ${meal.name}", fontWeight = FontWeight.Bold)
-            Text(text = "Type: ${meal.type}", fontWeight = FontWeight.Bold)
-            Text(text = "Price: $${meal.price}")
+            Text(text = "${meal.name}", fontWeight = FontWeight.Bold, fontSize = 18.sp)
+            Text(text = "${meal.type}")
+            Text(text = "$${meal.price}",fontWeight = FontWeight.Bold,fontSize = 18.sp)
         }
-    }
-}
-
-suspend fun callOpenAIAPIX(httpClient: HttpClient, healthStatus: String): List<String> {
-    val apiKey = "ssk-proj-ol3VJytWAEJXgsa5qdKxI6_0J630Oa3SqNskTBqLSJMC2eiG6zPUPUr_qHlnQebHvXU2kUHj8CT3BlbkFJMXq8Oz5vfTBEt7mXvjQcEtdFDCh_aaVlkHZTIpf1M2HwadQkLvadoJCWX4QPICGXv9z5yZkqgA" // Replace with your actual API key
-    val apiUrl = "https://api.openai.com/v1/chat/completions"
-
-    val requestBody = """
-        {
-            "model": "gpt-4",
-            "messages": [
-                {"role": "system", "content": "You are a helpful assistant."},
-                {"role": "user", "content": "Health status: $healthStatus, suggest 3 meals to eat and give only meal names as array format"}
-            ]
-        }
-    """
-
-    return try {
-        val response: HttpResponse = httpClient.post(apiUrl) {
-            header(HttpHeaders.Authorization, "Bearer $apiKey")
-            header(HttpHeaders.ContentType, ContentType.Application.Json)
-            setBody(requestBody)
-        }
-
-        val fullResponseText = response.bodyAsText()
-        val responseJson = Json.parseToJsonElement(fullResponseText)
-        val choices = responseJson.jsonObject["choices"]?.jsonArray
-        val content = choices?.get(0)?.jsonObject?.get("message")?.jsonObject?.get("content")?.jsonPrimitive?.content
-        content?.let { Json.parseToJsonElement(it).jsonArray.map { it.jsonPrimitive.content } } ?: emptyList()
-    } catch (e: Exception) {
-        println("Error: ${e.message}")
-        emptyList()
     }
 }

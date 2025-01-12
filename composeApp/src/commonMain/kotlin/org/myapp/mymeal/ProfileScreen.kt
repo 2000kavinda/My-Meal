@@ -15,8 +15,10 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.*
@@ -107,44 +109,60 @@ fun ProfileScreen(
     }
 
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Meal Details, $currentUserEmail") },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                    }
-                }
-            )
-        },
-        bottomBar = {
+
+                bottomBar = {
             BottomNavigation(
-                modifier = Modifier.fillMaxWidth(),
-                backgroundColor = MaterialTheme.colors.primarySurface
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+                .background(color = Color(0xFF002945), shape = RoundedCornerShape(16.dp)), // Set background color and corner radius
+                backgroundColor = Color(0xFF002945)
             ) {
                 BottomNavigationItem(
-                    icon = { Icon(Icons.Filled.Home, contentDescription = "Home") },
+                    icon = {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Icon(Icons.Filled.Home, contentDescription = "Home", tint = Color.White)
+                            Text("Home", color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                        }
+                    },
+                    //icon = { Icon(Icons.Filled.Home, contentDescription = "Home", tint = Color.White) }, // Set icon color to black
                     selected = selectedItem.value == 0,
-                    onClick = {
-                        navigationManager.navigateTo(Screen.MealList)
-                    }
+                    onClick = {navigationManager.navigateTo(Screen.MealList) }
                 )
                 BottomNavigationItem(
-                    icon = { Icon(Icons.Filled.Search, contentDescription = "Search") },
+                    icon = {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Icon(Icons.Filled.PlayArrow, contentDescription = "Play", tint = Color.White)
+                            Text("Play", color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                        }
+                    },
+                    //icon = { Icon(Icons.Filled.PlayArrow, contentDescription = "Search", tint = Color.White) }, // Set icon color to black
                     selected = selectedItem.value == 1,
-                    onClick = { selectedItem.value = 1 }
+                    onClick = { navigationManager.navigateTo(Screen.PlayScreen) }
                 )
                 BottomNavigationItem(
-                    icon = { Icon(Icons.Filled.Notifications, contentDescription = "Notifications") },
+                    icon = {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Icon(Icons.Filled.Menu, contentDescription = "History", tint = Color.White)
+                            Text("History", color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                        }
+                    },
+                    // icon = { Icon(Icons.Filled.Favorite, contentDescription = "Notifications", tint = Color.White) }, // Set icon color to black
                     selected = selectedItem.value == 2,
-                    onClick = { selectedItem.value = 2 }
+                    onClick = { navigationManager.navigateTo(Screen.History) }
                 )
                 BottomNavigationItem(
-                    icon = { Icon(Icons.Filled.AccountCircle, contentDescription = "Profile") },
+                    icon = {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Icon(Icons.Filled.AccountCircle, contentDescription = "Profile", tint = Color.White)
+                            Text("Profile", color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                        }
+                    },
+                    // icon = { Icon(Icons.Filled.AccountCircle, contentDescription = "Profile", tint = Color.White) }, // Set icon color to black
                     selected = selectedItem.value == 3,
                     onClick = {
                         navigationManager.navigateTo(Screen.ProfileScreen(meal = meal))
-                    }
+                    },
                 )
             }
         }
@@ -190,13 +208,13 @@ fun ProfileScreen(
                     .padding(20.dp)
                     .verticalScroll(scrollState)
             ) {
-                MealImageAndDetails(meal)
-                Spacer(modifier = Modifier.height(15.dp))
 
-                MealAdditionalDetails(
+                MealAdditionalDetails1(
                     sharedViewModel, coins,
                     meal, isLoading, errorMessage, nutritionData, healthMetrics, isApiLoading, apiResponse
                 ) { showCardDetailsDialog = true }
+                Spacer(modifier = Modifier.height(40.dp))
+                ProfileDetails(meal, sharedViewModel)
             }
         }
     }
@@ -215,24 +233,24 @@ fun ProfileDetails(meal: Meal, sharedViewModel: SharedViewModel) {
     Row(
         horizontalArrangement = Arrangement.Center, // Center the content horizontally
         modifier = Modifier.fillMaxWidth() // Make sure the row takes up the full width
-    ) {
+    ) {Spacer(modifier = Modifier.height(24.dp))
         Box(
             modifier = Modifier
-                .size(60.dp) // Set the size of the container
+                .size(150.dp) // Set the size of the container
                 .clip(CircleShape) // Make the container rounded
-                .background(MaterialTheme.colors.primary), // Set background color
+                .background(Color(0xFF002945)), // Set background color
             contentAlignment = Alignment.Center // Center the text inside the Box
         ) {
             Text(
                 text = initials, // Set the initials
                 color = Color.White, // Text color
-                style = MaterialTheme.typography.h6, // Text style
+                style = MaterialTheme.typography.h2, // Text style
                 fontWeight = FontWeight.Bold // Make the text bold
             )
         }
     }
 
-    Spacer(modifier = Modifier.height(24.dp))
+    Spacer(modifier = Modifier.height(40.dp))
 
     // Other Rows for displaying user info
     Row(
@@ -243,19 +261,19 @@ fun ProfileDetails(meal: Meal, sharedViewModel: SharedViewModel) {
             Icons.Filled.Email,
             contentDescription = "User Email Icon",
             modifier = Modifier.size(30.dp),
-            tint = MaterialTheme.colors.primary
+            tint = Color(0xFF002945)
         )
 
-        Spacer(modifier = Modifier.width(8.dp))
+        Spacer(modifier = Modifier.width(16.dp))
 
         Text(
             text = currentUserEmail ?: "No email available",
-            fontWeight = FontWeight.Bold,
-            fontSize = 27.sp
+            //fontWeight = FontWeight.Bold,
+            fontSize = 24.sp
         )
     }
 
-    Spacer(modifier = Modifier.height(24.dp))
+    Spacer(modifier = Modifier.height(18.dp))
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -265,19 +283,19 @@ fun ProfileDetails(meal: Meal, sharedViewModel: SharedViewModel) {
             Icons.Filled.Person,
             contentDescription = "User Gender Icon",
             modifier = Modifier.size(30.dp),
-            tint = MaterialTheme.colors.primary
+            tint = Color(0xFF002945)
         )
 
-        Spacer(modifier = Modifier.width(8.dp))
+        Spacer(modifier = Modifier.width(16.dp))
 
         Text(
             text = currentUserGender ?: "No gender available",
-            fontWeight = FontWeight.Bold,
-            fontSize = 27.sp
+            //fontWeight = FontWeight.Bold,
+            fontSize = 24.sp
         )
     }
 
-    Spacer(modifier = Modifier.height(24.dp))
+    Spacer(modifier = Modifier.height(18.dp))
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -287,19 +305,19 @@ fun ProfileDetails(meal: Meal, sharedViewModel: SharedViewModel) {
             Icons.Filled.Star,
             contentDescription = "User Goal Icon",
             modifier = Modifier.size(30.dp),
-            tint = MaterialTheme.colors.primary
+            tint = Color(0xFF002945)
         )
 
-        Spacer(modifier = Modifier.width(8.dp))
+        Spacer(modifier = Modifier.width(16.dp))
 
         Text(
             text = currentUserGoal ?: "No goal available",
-            fontWeight = FontWeight.Bold,
-            fontSize = 27.sp
+            //fontWeight = FontWeight.Bold,
+            fontSize = 24.sp
         )
     }
 
-    Spacer(modifier = Modifier.height(24.dp))
+    Spacer(modifier = Modifier.height(18.dp))
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -309,25 +327,31 @@ fun ProfileDetails(meal: Meal, sharedViewModel: SharedViewModel) {
             Icons.Filled.DateRange,
             contentDescription = "User Activity Level Icon",
             modifier = Modifier.size(30.dp),
-            tint = MaterialTheme.colors.primary
+            tint = Color(0xFF002945)
         )
 
-        Spacer(modifier = Modifier.width(8.dp))
+        Spacer(modifier = Modifier.width(16.dp))
 
         Text(
             text = currentUserActivityLevel ?: "No activity level available",
-            fontWeight = FontWeight.Bold,
-            fontSize = 27.sp
+            //fontWeight = FontWeight.Bold,
+            fontSize = 24.sp
         )
     }
+    Spacer(modifier = Modifier.height(12.dp))
     Button(
         onClick = {
 
         },
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(48.dp),
+        shape = RoundedCornerShape(12.dp),
+        colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF002945))
+
     ) {
         Text(
-            text = "Logout"
+            text = "Log out", color = Color.White,fontWeight = FontWeight.Bold,
         )
     }
 }
@@ -351,7 +375,7 @@ fun MealAdditionalDetails1(
          healthMetrics != null -> {
             NutritionDetails1(healthMetrics = healthMetrics)
             // Add additional health metrics or other UI
-            HealthMetricsDisplay(healthMetrics = healthMetrics, meal = meal)
+            HealthMetricsDisplay1(healthMetrics = healthMetrics, meal = meal)
         }
         else -> Text(text = "No nutrition data available.")
     }
@@ -382,14 +406,74 @@ fun MealAdditionalDetails1(
                 text = "Pay $" + (meal.price - (coins ?: 0.0)).toString() + " + $coins Coins"
             )
         }*/
-        Text(
-            text = "$coins"
-        )
+        Spacer(modifier = Modifier.height(60.dp))
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(0.dp),
+            elevation = 4.dp,
+            backgroundColor = Color(0xFFCBD5ED),
+            shape = RoundedCornerShape(12.dp) // Rounded corners
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Coins Balance",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 22.sp,
+                    color = Color(0xFF000000),
+
+                )
+                //Spacer(modifier = Modifier.height(8.dp))
+                // 1st Column: Text "Coins"
+                /*Text(
+                    text = "Coins",
+                    style = MaterialTheme.typography.body1,
+                    color = Color.White // Text color for contrast
+                )*/
+
+                // 2nd Column: Coin Count
+                Text(
+                    text = coins?.toString() ?: "0",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 22.sp,
+                    color = Color(0xFF000000),
+
+                    )
+
+            }}
 
     }
 
 
 
+}
+
+
+@Composable
+fun HealthMetricsDisplay1(healthMetrics: HealthMetrics,meal: Meal) {
+    Column(horizontalAlignment = Alignment.Start) {
+        //Text(text = "Health Metrics", style = MaterialTheme.typography.h6)
+        //Spacer(modifier = Modifier.height(8.dp))
+        //Text(text = "Total Calories: ${"%.2f".format(healthMetrics.calorieAverage)}")
+        //Text(text = "Carbohydrate Percentage: ${"%.2f".format(healthMetrics.carbAvg)}g")
+        //Text(text = "Protein Percentage: ${"%.2f".format(healthMetrics.proteinAvg)}g")
+        //Text(text = "Fat Percentage: ${"%.2f".format(healthMetrics.fatAvg)}g")
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            text = "${healthMetrics.healthStatus}",
+            style = MaterialTheme.typography.body1.copy(
+                fontWeight = FontWeight.Bold,
+                color = if (healthMetrics.healthStatus.contains("Healthy"))
+                    MaterialTheme.colors.primary else MaterialTheme.colors.error
+            )
+        )
+    }
 }
 @Composable
 fun NutritionDetails1(healthMetrics: HealthMetrics) {
@@ -397,7 +481,7 @@ fun NutritionDetails1(healthMetrics: HealthMetrics) {
         Column(modifier = Modifier.fillMaxWidth()) {
             // Align first text "Meal Nutrition" to the start (left)
             Text(
-                text = "Meal Nutrition",
+                text = "User Body Average Nutrition Level",
                 fontWeight = FontWeight.Bold,
                 fontSize = 22.sp,
                 color = Color(0xFF000000),
