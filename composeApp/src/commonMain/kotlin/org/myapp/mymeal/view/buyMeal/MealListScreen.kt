@@ -1,4 +1,4 @@
-package org.myapp.mymeal.view.HomeAndBuyMeal
+package org.myapp.mymeal.view.buyMeal
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -14,6 +14,7 @@ import org.myapp.mymeal.navigation.Screen
 import org.myapp.mymeal.components.BottomNavigationBar
 import org.myapp.mymeal.components.MealCard
 import org.myapp.mymeal.controller.FirestoreRepository
+import org.myapp.mymeal.ui.theme.ColorThemes
 
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -84,7 +85,7 @@ fun MealListScreen(
             )
 
             if (isLoading) {
-                CircularProgressIndicator()
+                CircularProgressIndicator(color = ColorThemes.PrimaryButtonColor)
             } else if (errorMessage.isNotEmpty()) {
                 Text(text = errorMessage)
             } else {

@@ -8,16 +8,15 @@ import androidx.compose.runtime.getValue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.myapp.mymeal.ImagePickerUI
 import org.myapp.mymeal.PlatformImagePicker
-import org.myapp.mymeal.view.PlayGame.PlayScreen
-import org.myapp.mymeal.view.Profile.ProfileScreen
-import org.myapp.mymeal.SharedViewModel
+import org.myapp.mymeal.view.playGame.PlayScreen
+import org.myapp.mymeal.view.profile.ProfileScreen
+import org.myapp.mymeal.state.SharedViewModel
 import org.myapp.mymeal.model.User
 import org.myapp.mymeal.controller.FirestoreRepository
-import org.myapp.mymeal.view.History.HistoryScreen
-import org.myapp.mymeal.view.HomeAndBuyMeal.MealDetailsScreen
-import org.myapp.mymeal.view.HomeAndBuyMeal.MealListScreen
+import org.myapp.mymeal.view.history.HistoryScreen
+import org.myapp.mymeal.view.buyMeal.MealDetailsScreen
+import org.myapp.mymeal.view.buyMeal.MealListScreen
 import org.myapp.mymeal.view.authentication.SignUpScreen
 import org.myapp.mymeal.view.authentication.SignInScreen
 import java.security.MessageDigest
@@ -54,7 +53,7 @@ fun NavigationHost(
             onSave = { email, password,gender, activityLevel,  goal ,onSuccess ->
                 // Call firestoreRepository to add the user
                 onSaveUser(email, password, gender, activityLevel, goal, firestoreRepository, onSuccess,sharedViewModel, navigationManager)
-            }
+            },sharedViewModel=sharedViewModel
         )
         is Screen.MealList -> MealListScreen(
             repository = firestoreRepository,
@@ -64,16 +63,14 @@ fun NavigationHost(
             }
         )
         is Screen.History -> HistoryScreen(
+            sharedViewModel=sharedViewModel,
         repository = firestoreRepository,
         onMealClick = { meal ->
             navigationManager.navigateTo(Screen.MealDetails(meal))
             //navigationManager.navigateTo(Screen.ProfileScreen(meal))
         }
     )
-        is Screen.ImagePickerUI -> ImagePickerUI(
-            onPickImage = { /* Your logic to pick an image */ },
-            imageBitmap = null // Pass the appropriate ImageBitmap or state here
-        )
+
         is Screen.PlatformImagePicker -> PlatformImagePicker()
 
         is Screen.MealDetails -> MealDetailsScreen(
@@ -84,14 +81,13 @@ fun NavigationHost(
         is Screen.ProfileScreen -> ProfileScreen(
             meal = (currentScreen as Screen.ProfileScreen).meal,
             sharedViewModel = sharedViewModel,
-            onBack = { navigationManager.navigateBack() }
         )
         is Screen.PlayScreen -> PlayScreen(
             repository = firestoreRepository,
             onMealClick = { meal ->
                 navigationManager.navigateTo(Screen.MealDetails(meal))
                 //navigationManager.navigateTo(Screen.ProfileScreen(meal))
-            })
+            },sharedViewModel=sharedViewModel)
         is Screen.GameScreen -> GameScreen(
             )
     }

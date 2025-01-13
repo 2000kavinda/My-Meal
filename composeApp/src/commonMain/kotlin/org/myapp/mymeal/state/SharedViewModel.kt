@@ -1,6 +1,5 @@
-package org.myapp.mymeal
+package org.myapp.mymeal.state
 
-import jdk.jfr.DataAmount
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 

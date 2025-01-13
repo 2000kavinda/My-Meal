@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import org.myapp.mymeal.controller.FirestoreRepository
 import org.myapp.mymeal.navigation.NavigationHost
 import org.myapp.mymeal.navigation.NavigationProvider
+import org.myapp.mymeal.state.SharedViewModel
 
 @Composable
 fun App() {

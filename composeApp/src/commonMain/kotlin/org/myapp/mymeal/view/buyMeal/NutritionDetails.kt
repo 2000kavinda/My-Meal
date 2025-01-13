@@ -1,4 +1,4 @@
-package org.myapp.mymeal.view.HomeAndBuyMeal
+package org.myapp.mymeal.view.buyMeal
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -10,7 +10,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 //import coil.compose.AsyncImage
-import org.myapp.mymeal.NutritionResponse
+import org.myapp.mymeal.controller.NutritionResponse
 import org.myapp.mymeal.components.NutriCard
 import org.myapp.mymeal.components.NutrientCard
 

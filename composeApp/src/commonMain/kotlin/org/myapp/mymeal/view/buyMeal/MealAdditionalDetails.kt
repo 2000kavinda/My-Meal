@@ -1,19 +1,21 @@
-package org.myapp.mymeal.view.HomeAndBuyMeal
+package org.myapp.mymeal.view.buyMeal
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 //import coil.compose.AsyncImage
 import org.myapp.mymeal.model.Meal
-import org.myapp.mymeal.NutritionResponse
-import org.myapp.mymeal.SharedViewModel
+import org.myapp.mymeal.controller.NutritionResponse
+import org.myapp.mymeal.state.SharedViewModel
 import org.myapp.mymeal.model.HealthMetrics
-import org.myapp.mymeal.ui.theme.PrimaryButtonColor
+import org.myapp.mymeal.ui.theme.ColorThemes
 
 @Composable
 fun MealAdditionalDetails(
@@ -29,18 +31,26 @@ fun MealAdditionalDetails(
     onShowCardDetails: () -> Unit
 ) {
     when {
-        isLoading -> CircularProgressIndicator()
+        isLoading -> CircularProgressIndicator(color = ColorThemes.PrimaryButtonColor)
         errorMessage.isNotEmpty() -> Text(text = errorMessage, color = MaterialTheme.colors.error)
         nutritionData != null && healthMetrics != null -> {
             NutritionDetails(nutritionData = nutritionData)
             // Add additional health metrics or other UI
             HealthMetricsDisplay(healthMetrics = healthMetrics, meal = meal)
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = "Recommendation for You",
+                fontWeight = FontWeight.Bold,
+                fontSize = 22.sp,
+                color = ColorThemes.PrimaryBlackColor
+            )
+
         }
         else -> Text(text = "No nutrition data available.")
     }
 
     if (isApiLoading) {
-        CircularProgressIndicator()
+        CircularProgressIndicator(color= ColorThemes.PrimaryButtonColor)
     } else {
         apiResponse?.let {
             AIResponseDisplay(apiResponse = it)
@@ -53,7 +63,7 @@ fun MealAdditionalDetails(
                 .fillMaxWidth()
                 .height(48.dp),
             shape = RoundedCornerShape(12.dp),
-            colors = ButtonDefaults.buttonColors(backgroundColor = PrimaryButtonColor)
+            colors = ButtonDefaults.buttonColors(backgroundColor = ColorThemes.PrimaryButtonColor)
         ) {
             Text("Pay $"+meal.price, color = Color.White, fontWeight = FontWeight.Bold)
         }
@@ -86,7 +96,7 @@ fun MealAdditionalDetails(
                 .fillMaxWidth()
                 .height(48.dp),
             shape = RoundedCornerShape(12.dp),
-            colors = ButtonDefaults.buttonColors(backgroundColor = PrimaryButtonColor)
+            colors = ButtonDefaults.buttonColors(backgroundColor = ColorThemes.PrimaryButtonColor)
         ) {
             Text(
                 text = if (coins != null && coins <= meal.price) {

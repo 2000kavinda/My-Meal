@@ -32,6 +32,7 @@ import org.myapp.mymeal.controller.FirestoreRepository
 import org.myapp.mymeal.controller.analyzeImages
 import org.myapp.mymeal.model.Order
 import org.myapp.mymeal.navigation.Screen
+import org.myapp.mymeal.state.SharedViewModel
 import java.io.InputStream
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -43,7 +44,7 @@ fun AndroidImagePicker() {
     var nutritionalInfo by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
-    val sharedViewModel=SharedViewModel();
+    val sharedViewModel= SharedViewModel();
     val currentUserEmail by sharedViewModel.currentUserEmail.collectAsState()
 
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->

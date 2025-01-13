@@ -1,9 +1,8 @@
-package org.myapp.mymeal
+package org.myapp.mymeal.controller
 
 import io.ktor.client.*
 import io.ktor.client.call.body
 import io.ktor.client.request.*
-import io.ktor.client.statement.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.Serializable

@@ -16,14 +16,13 @@ import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import org.myapp.mymeal.SharedViewModel
+import org.myapp.mymeal.state.SharedViewModel
 import org.myapp.mymeal.components.CustomOutlinedTextField
 import org.myapp.mymeal.components.CustomPasswordTextField
 import org.myapp.mymeal.components.LoadingButton
+import org.myapp.mymeal.ui.theme.ColorThemes
+import org.myapp.mymeal.ui.theme.FontSizes
 import org.myapp.mymeal.utils.Constants
-import org.myapp.mymeal.ui.theme.PrimaryBgColor
-import org.myapp.mymeal.ui.theme.PrimaryButtonColor
-import org.myapp.mymeal.ui.theme.PrimaryTextColor
 
 @Composable
 fun SignInScreen(
@@ -38,7 +37,7 @@ fun SignInScreen(
 
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
         val isWideScreen = maxWidth > 600.dp // Adjust breakpoint as needed
-        val backgroundColor = if (isWideScreen) PrimaryBgColor else MaterialTheme.colors.background
+        val backgroundColor = if (isWideScreen) ColorThemes.PrimaryBgColor else MaterialTheme.colors.background
 
         Box(
             modifier = Modifier
@@ -134,7 +133,7 @@ fun SignInForm(
         text = "Log in",
         style = MaterialTheme.typography.h4.copy(
             fontWeight = FontWeight.Bold,
-            fontSize = 36.sp,
+            fontSize = FontSizes.font36,
         ),
         color = Color(0xFF002945),
         modifier = Modifier.padding(bottom = 48.dp)
@@ -157,6 +156,7 @@ fun SignInForm(
         isPasswordVisible = isPasswordVisible,
         onPasswordVisibilityChange = { isPasswordVisible = it }
     )
+    Spacer(modifier = Modifier.height(16.dp))
 
 
     // Log In Button
@@ -179,8 +179,8 @@ fun SignInForm(
         },
         isLoading = isLoadingState,
         buttonText = "Log in",
-        backgroundColor = PrimaryButtonColor,
-        textColor = PrimaryTextColor
+        backgroundColor = ColorThemes.PrimaryButtonColor,
+        textColor = ColorThemes.PrimaryTextColor
     )
 
 

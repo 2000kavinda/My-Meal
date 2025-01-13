@@ -1,36 +1,39 @@
-package org.myapp.mymeal.view.History
+package org.myapp.mymeal.view.playGame
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import io.ktor.client.HttpClient
-import org.myapp.mymeal.model.Meal
-import org.myapp.mymeal.navigation.NavigationProvider.navigationManager
-import org.myapp.mymeal.NutritionRepository
-import org.myapp.mymeal.NutritionResponse
+import org.myapp.mymeal.controller.NutritionRepository
+import org.myapp.mymeal.controller.NutritionResponse
 import org.myapp.mymeal.navigation.Screen
-import org.myapp.mymeal.view.HomeAndBuyMeal.calculateHealthMetrics
+import org.myapp.mymeal.navigation.NavigationProvider.navigationManager
 import org.myapp.mymeal.components.BottomNavigationBar
 import org.myapp.mymeal.controller.FirestoreRepository
 import org.myapp.mymeal.model.HealthMetrics
+import org.myapp.mymeal.model.Meal
+import org.myapp.mymeal.state.SharedViewModel
+import org.myapp.mymeal.ui.theme.ColorThemes
+import org.myapp.mymeal.view.buyMeal.calculateHealthMetrics
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun HistoryScreen(
+fun PlayScreen(
     repository: FirestoreRepository,
     onMealClick: (Meal) -> Unit,
+    sharedViewModel: SharedViewModel,
 ) {
     val nutritionRepository = remember { NutritionRepository() }
     val firestoreRepository = remember { FirestoreRepository() }
     val httpClient = remember { HttpClient() }
+    var showPopup by remember { mutableStateOf(false) }
 
     var meals by remember { mutableStateOf<List<Meal>>(emptyList()) }
     var filteredMeals by remember { mutableStateOf<List<Meal>>(emptyList()) }
@@ -41,6 +44,11 @@ fun HistoryScreen(
     var healthMetrics by remember { mutableStateOf<HealthMetrics?>(null) }
     var coins by remember { mutableStateOf(0.0) }
     var aiRecommendations by remember { mutableStateOf("") }
+    val currentUserEmail by sharedViewModel.currentUserEmail.collectAsState()
+    val currentUserGender by sharedViewModel.currentUserGender.collectAsState()
+    val currentUserGoal by sharedViewModel.currentUserGoal.collectAsState()
+    val currentUserActivityLevel by sharedViewModel.currentUserActivityLevel.collectAsState()
+    val selectedItem = remember { mutableStateOf(0) }
     var meal = Meal(
         name = "Default Meal",
         photo = "https://example.com/default-photo.jpg",
@@ -48,19 +56,23 @@ fun HistoryScreen(
         description = "Default description",
         type = "Default type"
     )
-    val selectedItem = remember { mutableStateOf(0) }
 
     LaunchedEffect(Unit) {
         try {
             isLoading = true
-            meals = repository.getOrders("kavindaudara75@gmail.com")
-            filteredMeals = meals
-            errorMessage = if (meals.isEmpty()) "No meals found" else ""
 
-            val nutrition = firestoreRepository.fetchNutritionData("kavindaudara75@gmail.com")
-            coins = firestoreRepository.fetchCoinCount("kavindaudara75@gmail.com") ?: 0.0
-            val dayCount = firestoreRepository.fetchUniqueDateCountExcludingToday("kavindaudara75@gmail.com")
-            healthMetrics = calculateHealthMetrics(nutrition, nutritionData, dayCount, "Male", "Moderate", "Maintain Weight")
+            val meals = firestoreRepository.fetchNutritionData(currentUserEmail?:"")
+            coins = firestoreRepository.fetchCoinCount(currentUserEmail?:"")!!
+            val dayCount = firestoreRepository.fetchUniqueDateCountExcludingToday(currentUserEmail?:"")
+            healthMetrics = calculateHealthMetrics(
+                meals,
+                nutritionData,
+                dayCount,
+                currentUserGender?:"",
+                currentUserActivityLevel?:"",
+                currentUserGoal?:""
+            )
+
         } catch (e: Exception) {
             errorMessage = "Error fetching data: ${e.message}"
         } finally {
@@ -84,21 +96,36 @@ fun HistoryScreen(
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            if (isLoading) {
-                CircularProgressIndicator()
-            } else if (errorMessage.isNotEmpty()) {
-                Text(text = errorMessage)
-            } else {
-                FlowRow(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp)
-                ) {
-                    filteredMeals.forEach { meal ->
-                        MealCard1(meal = meal, onMealClick = onMealClick)
+            AsyncImage(
+                model = "https://firebasestorage.googleapis.com/v0/b/care-cost.appspot.com/o/meal%20photos%2FUntitled_design__1_-removebg.png?alt=media&token=0dacbe0d-7fa8-407a-86ab-020832fb83b8",
+                contentDescription = "Meal Image",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(400.dp)
+            )
+            //Spacer(modifier = Modifier.height(32.dp))
+
+
+            Spacer(modifier = Modifier.height(35.dp)) // Add spacing between image and button
+
+            Button(
+                onClick = {
+                    if (healthMetrics?.healthStatus?.contains("Healthy") == true) {
+                        navigationManager.navigateTo(Screen.GameScreen)
                     }
-                }
+                    else{showPopup = true}
+                },
+                modifier = Modifier
+                    .fillMaxWidth(0.5f)
+                    .height(48.dp),
+                shape = RoundedCornerShape(12.dp),
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF002945))
+            ) {
+
+                    Text("Play & Earn", color = Color.White)
+
             }
+
         }
 
         // Bottom Navigation Bar
@@ -114,6 +141,18 @@ fun HistoryScreen(
                 }
             )
         }
+    }
+    if (showPopup) {
+        AlertDialog(
+            onDismissRequest = { showPopup = false },
+            title = { Text("Be Healthy to Play") },
+            text = { Text("Maintain healthy status to play the game and earn coins.") },
+            confirmButton = {
+                TextButton(onClick = { showPopup = false }) {
+                    Text("OK", color = ColorThemes.PrimaryButtonColor)
+                }
+            }
+        )
     }
 }
 
@@ -137,63 +176,6 @@ fun HistoryScreen(
 
 
 
-
-
-
-@Composable
-fun MealCard1(meal: Meal, onMealClick: (Meal) -> Unit) {
-    Card(
-        modifier = Modifier
-            .width(600.dp)
-            .padding(8.dp)
-            .clickable { onMealClick(meal) },
-        elevation = 4.dp
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            // First Column: Meal Image
-            AsyncImage(
-                model = meal.photo,
-                contentDescription = "Meal Image",
-                modifier = Modifier
-                    .size(100.dp) // Set a fixed size for the image
-            )
-
-            // Spacer between columns
-            Spacer(modifier = Modifier.width(16.dp))
-
-            // Second Column: Text Details
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.Center
-            ) {
-                Text(text = "${meal.name}", fontWeight = FontWeight.Bold)
-                Text(text = "${meal.type}")
-                Text(text = "$${meal.price}", fontWeight = FontWeight.Bold)
-            }
-
-            // Spacer between columns
-            Spacer(modifier = Modifier.width(16.dp))
-
-            // Third Column: Reorder Button
-            Button(
-                onClick = { onMealClick(meal) },
-                colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF002945)), // Replace with your desired hex code
-                modifier = Modifier
-                    .width(100.dp)
-                    .height(40.dp)
-            ) {
-                Text(text = "Reorder", color = Color.White) // Set text color if needed
-            }
-
-        }
-    }
-}
 
 
 

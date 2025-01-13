@@ -1,4 +1,4 @@
-package org.myapp.mymeal.view.HomeAndBuyMeal
+package org.myapp.mymeal.view.buyMeal
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -19,13 +19,14 @@ import io.ktor.client.statement.*
 import io.ktor.http.*
 import kotlinx.coroutines.launch
 import org.myapp.mymeal.model.Meal
-import org.myapp.mymeal.NutritionRepository
-import org.myapp.mymeal.NutritionResponse
+import org.myapp.mymeal.controller.NutritionRepository
+import org.myapp.mymeal.controller.NutritionResponse
 import org.myapp.mymeal.model.Order
-import org.myapp.mymeal.SharedViewModel
+import org.myapp.mymeal.state.SharedViewModel
 import org.myapp.mymeal.controller.FirestoreRepository
 import org.myapp.mymeal.currentPlatform
 import org.myapp.mymeal.model.HealthMetrics
+import org.myapp.mymeal.ui.theme.ColorThemes
 
 
 @Composable
@@ -45,6 +46,9 @@ fun MealDetailsScreen(meal: Meal, sharedViewModel: SharedViewModel, onBack: () -
 
     val coroutineScope = rememberCoroutineScope()
     val currentUserEmail by sharedViewModel.currentUserEmail.collectAsState()
+    val currentUserGender by sharedViewModel.currentUserGender.collectAsState()
+    val currentUserGoal by sharedViewModel.currentUserGoal.collectAsState()
+    val currentUserActivityLevel by sharedViewModel.currentUserActivityLevel.collectAsState()
 
     // Fetch data when the screen loads
     LaunchedEffect(Unit) {
@@ -55,7 +59,7 @@ fun MealDetailsScreen(meal: Meal, sharedViewModel: SharedViewModel, onBack: () -
                 val meals = firestoreRepository.fetchNutritionData(currentUserEmail?:"")
                  coins = firestoreRepository.fetchCoinCount(currentUserEmail?:"")!!
                 val dayCount = firestoreRepository.fetchUniqueDateCountExcludingToday(currentUserEmail?:"")
-                healthMetrics = calculateHealthMetrics(meals, nutritionData, dayCount, "Male", "Moderate", "Maintain Weight")
+                healthMetrics = calculateHealthMetrics(meals, nutritionData, dayCount, currentUserGender?:"", currentUserActivityLevel?:"", currentUserGoal?:"")
             } catch (e: Exception) {
                 errorMessage = "Error fetching data: ${e.message}"
             } finally {
@@ -169,7 +173,7 @@ fun AIResponseDisplay(apiResponse: String) {
 
 //add to the service
 suspend fun callOpenAIAPI(httpClient: HttpClient, healthStatus: String): String {
-    val apiKey = "ssk-proj-ol3VJytWAEJXgsa5qdKxI6_0J630Oa3SqNskTBqLSJMC2eiG6zPUPUr_qHlnQebHvXU2kUHj8CT3BlbkFJMXq8Oz5vfTBEt7mXvjQcEtdFDCh_aaVlkHZTIpf1M2HwadQkLvadoJCWX4QPICGXv9z5yZkqgA" // Replace with your API key
+    val apiKey = "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" // Replace with your API key
     val apiUrl = "https://api.openai.com/v1/chat/completions"
 
     val requestBody = """
@@ -177,7 +181,7 @@ suspend fun callOpenAIAPI(httpClient: HttpClient, healthStatus: String): String 
             "model": "gpt-4",
             "messages": [
                 {"role": "system", "content": "You are a helpful assistant."},
-                {"role": "user", "content": "Health status: $healthStatus, give recommendations in short manner as a small paragraph"}
+                {"role": "user", "content": "Health status: $healthStatus, suggest what should i eat in short manner as a small paragraph"}
             ]
         }
     """
@@ -299,7 +303,7 @@ fun HealthMetricsDisplay(healthMetrics: HealthMetrics,meal: Meal) {
             style = MaterialTheme.typography.body1.copy(
                 fontWeight = FontWeight.Bold,
                 color = if (healthMetrics.healthStatus.contains("Healthy"))
-                    MaterialTheme.colors.primary else MaterialTheme.colors.error
+                    ColorThemes.PrimaryGreenColor else MaterialTheme.colors.error
             )
         )
     }

@@ -1,4 +1,4 @@
-package org.myapp.mymeal.view.HomeAndBuyMeal
+package org.myapp.mymeal.view.buyMeal
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*

@@ -1,6 +1,6 @@
 package org.myapp.mymeal.controller
 
-import org.myapp.mymeal.SharedViewModel
+import org.myapp.mymeal.state.SharedViewModel
 import java.security.MessageDigest
 
 class AuthService(private val repository: FirestoreRepository, private val sharedViewModel: SharedViewModel) {

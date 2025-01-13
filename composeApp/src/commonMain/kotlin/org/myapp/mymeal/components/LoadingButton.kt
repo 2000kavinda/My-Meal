@@ -8,8 +8,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import org.myapp.mymeal.ui.theme.PrimaryButtonColor
-import org.myapp.mymeal.ui.theme.PrimaryTextColor
+import org.myapp.mymeal.ui.theme.ColorThemes
 
 @Composable
 fun LoadingButton(
@@ -17,8 +16,8 @@ fun LoadingButton(
     isLoading: Boolean,
     modifier: Modifier = Modifier,
     buttonText: String,
-    backgroundColor: Color = PrimaryButtonColor,
-    textColor: Color = PrimaryTextColor
+    backgroundColor: Color = ColorThemes.PrimaryButtonColor,
+    textColor: Color = ColorThemes.PrimaryTextColor
 ) {
     Button(
         onClick = onClick,

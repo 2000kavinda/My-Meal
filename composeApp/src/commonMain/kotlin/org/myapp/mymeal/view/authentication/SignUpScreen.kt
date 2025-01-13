@@ -21,15 +21,17 @@ import org.myapp.mymeal.navigation.Screen
 import org.myapp.mymeal.components.CustomDropdown
 import org.myapp.mymeal.components.CustomOutlinedTextField
 import org.myapp.mymeal.components.CustomPasswordTextField
+import org.myapp.mymeal.state.SharedViewModel
+import org.myapp.mymeal.ui.theme.ColorThemes
 import org.myapp.mymeal.utils.Constants
-import org.myapp.mymeal.ui.theme.PrimaryBgColor
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun SignUpScreen(
     isLoading: Boolean,
     message: String,
-    onSave: (String, String, String, String, String, () -> Unit) -> Unit
+    onSave: (String, String, String, String, String, () -> Unit) -> Unit,
+    sharedViewModel: SharedViewModel,
 ) {
     var email by remember { mutableStateOf(TextFieldValue("")) }
     var password by remember { mutableStateOf(TextFieldValue("")) }
@@ -45,7 +47,7 @@ fun SignUpScreen(
 
     BoxWithConstraints(modifier = Modifier.fillMaxSize()){
         val isWideScreen = maxWidth > 600.dp // Adjust breakpoint as needed
-        val backgroundColor = if (isWideScreen) PrimaryBgColor else MaterialTheme.colors.background
+        val backgroundColor = if (isWideScreen) ColorThemes.PrimaryBgColor else MaterialTheme.colors.background
 
         Box(
             modifier = Modifier
@@ -96,7 +98,8 @@ fun SignUpScreen(
                                 isLoading = isLoading,
                                 message = message,
 
-                                onSave = onSave
+                                onSave = onSave,
+                                sharedViewModel = sharedViewModel
                             )
 
 
@@ -128,7 +131,8 @@ fun SignUpScreen(
                         isLoading = isLoading,
                         message = message,
 
-                        onSave = onSave
+                        onSave = onSave,
+                        sharedViewModel = sharedViewModel
                     )
                 }
             }
@@ -139,7 +143,8 @@ fun SignUpScreen(
 fun SignUpForm(
     isLoading: Boolean,
     message: String,
-    onSave: (String, String, String, String, String, () -> Unit) -> Unit
+    onSave: (String, String, String, String, String, () -> Unit) -> Unit,
+    sharedViewModel: SharedViewModel,
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -148,10 +153,10 @@ fun SignUpForm(
     var selectedActivityLevel by remember { mutableStateOf("Select Activity Level") }
     var selectedGoal by remember { mutableStateOf("Select Goal") }
     var errorMessage by remember { mutableStateOf("") }
-
-    val genderOptions = listOf("Male", "Female", "Other")
-    val activityLevelOptions = listOf("Sedentary", "Light", "Moderate", "Active", "Very Active")
-    val goalOptions = listOf("Lose Weight", "Maintain Weight", "Gain Weight")
+    //val sharedViewModel = SharedViewModel()
+    val genderOptions = listOf("Male", "Female")
+    val activityLevelOptions = listOf("Low", "Moderate", "High")
+    val goalOptions = listOf("Weight Loss", "Muscle Gain", "Maintain")
 
     Text(
         text = "Register",
@@ -170,7 +175,7 @@ fun SignUpForm(
         label = { Text("Your email") }
     )
 
-    Spacer(modifier = Modifier.height(16.dp))
+    //Spacer(modifier = Modifier.height(16.dp))
 
     // Password TextField
     CustomPasswordTextField(
@@ -181,7 +186,7 @@ fun SignUpForm(
         onPasswordVisibilityChange = { isPasswordVisible = it }
     )
 
-    Spacer(modifier = Modifier.height(16.dp))
+    //Spacer(modifier = Modifier.height(16.dp))
 
     // Gender Dropdown
     CustomDropdown(
@@ -233,6 +238,15 @@ fun SignUpForm(
                     errorMessage = "Please fill all fields"
                 } else {
                     errorMessage = "" // Clear error message
+
+                        sharedViewModel.setCurrentUserGoal(selectedGoal)
+
+
+                        sharedViewModel.setCurrentUserGender(selectedGender)
+
+
+                        sharedViewModel.setCurrentUserActivityLevel(selectedActivityLevel)
+
                     onSave(
                         email,
                         password,
@@ -269,6 +283,8 @@ fun SignUpForm(
 
         }
 
+
+}
     Spacer(modifier = Modifier.height(24.dp))
 
     // Sign-up Text
@@ -290,7 +306,7 @@ fun SignUpForm(
             )
         )
     }
-}}
+}
 
 
 

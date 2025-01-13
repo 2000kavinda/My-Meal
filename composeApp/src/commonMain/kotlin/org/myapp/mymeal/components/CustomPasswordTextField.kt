@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import org.myapp.mymeal.ui.theme.SecondaryTextColor
+import org.myapp.mymeal.ui.theme.ColorThemes
 
 @Composable
 fun CustomPasswordTextField(
@@ -28,14 +28,14 @@ fun CustomPasswordTextField(
         label = label,
         modifier = modifier
             .fillMaxWidth()
-            .padding(bottom = 42.dp),
+            .padding(bottom = 16.dp),
         singleLine = true,
         shape = RoundedCornerShape(12.dp),
         colors = TextFieldDefaults.outlinedTextFieldColors(
-            focusedBorderColor = SecondaryTextColor,
-            unfocusedBorderColor = SecondaryTextColor,
-            focusedLabelColor = SecondaryTextColor,
-            unfocusedLabelColor = SecondaryTextColor
+            focusedBorderColor = ColorThemes.SecondaryTextColor,
+            unfocusedBorderColor = ColorThemes.SecondaryTextColor,
+            focusedLabelColor = ColorThemes.SecondaryTextColor,
+            unfocusedLabelColor = ColorThemes.SecondaryTextColor
         ),
         visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
         trailingIcon = {

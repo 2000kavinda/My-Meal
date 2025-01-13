@@ -1,4 +1,4 @@
-package org.myapp.mymeal.view.HomeAndBuyMeal
+package org.myapp.mymeal.view.buyMeal
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -11,13 +11,13 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import org.myapp.mymeal.model.Meal
 import org.myapp.mymeal.navigation.NavigationProvider.navigationManager
-import org.myapp.mymeal.NutritionResponse
+import org.myapp.mymeal.controller.NutritionResponse
 import org.myapp.mymeal.model.Order
 import org.myapp.mymeal.navigation.Screen
-import org.myapp.mymeal.SharedViewModel
+import org.myapp.mymeal.state.SharedViewModel
 import org.myapp.mymeal.components.CustomOutlinedTextField
 import org.myapp.mymeal.controller.FirestoreRepository
-import org.myapp.mymeal.ui.theme.PrimaryButtonColor
+import org.myapp.mymeal.ui.theme.ColorThemes
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -135,7 +135,7 @@ fun CardDetailsDialog(
                     }
                 }
             },colors = ButtonDefaults.buttonColors(
-                backgroundColor = PrimaryButtonColor, // Replace with your desired color
+                backgroundColor = ColorThemes.PrimaryButtonColor, // Replace with your desired color
                 contentColor = Color.White // Text color
             )) {
                 Text("Submit")
@@ -145,7 +145,7 @@ fun CardDetailsDialog(
             Button(
                 onClick = onDismiss,
                 colors = ButtonDefaults.buttonColors(
-                    backgroundColor = PrimaryButtonColor, // Replace with your desired color
+                    backgroundColor = ColorThemes.PrimaryButtonColor, // Replace with your desired color
                     contentColor = Color.White // Text color
                 )
             ) {

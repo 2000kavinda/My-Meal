@@ -7,6 +7,8 @@ import org.myapp.mymeal.model.Meal
 import org.myapp.mymeal.model.Order
 import org.myapp.mymeal.model.User
 import org.myapp.mymeal.model.Card
+import org.myapp.mymeal.model.Coin
+import org.myapp.mymeal.state.SharedViewModel
 import java.time.LocalDate
 
 class FirestoreRepository {
@@ -16,6 +18,7 @@ class FirestoreRepository {
 
     suspend fun addUser(user: User): Result<String> {
         return try {
+
 
             val existingUser = db.collection("users")
                 .whereEqualTo("email", user.email)
@@ -28,7 +31,29 @@ class FirestoreRepository {
             } else {
 
                 val document = db.collection("users").add(user).await()
+
+                saveOrder(
+                    Order(
+                        name = "",
+                        calories = 4000.0,
+                        carbohydrates = 400.0,
+                        proteins = 125.0,
+                        fats = 120.0,
+                        price = 0.0,
+                        photo = "",
+                        email = user.email,
+                        description = "",
+                        type = ""
+                    )
+                )
+                saveCoin(Coin(
+                    count = 0.0,
+                    email = user.email
+                ))
                 Result.success(document.id)
+
+                // Save the order details to Firestore
+
             }
         } catch (e: Exception) {
             Result.failure(e)
@@ -117,9 +142,11 @@ class FirestoreRepository {
         return try {
             // Fetch meals collection from Firestore filtered by email
             val snapshot = db.collection("orders")
-                .whereEqualTo("email", email) // Filter by email
+                .whereEqualTo("email", email)  // Filter by email
+                .whereNotEqualTo("name", "")   // Filter where name is not equal to an empty string
                 .get()
                 .await()
+
 
             // Map the snapshot to a list of Meal objects
             snapshot.documents.map { document ->
@@ -223,6 +250,17 @@ class FirestoreRepository {
     suspend fun saveOrder(order: Order) {
         db.collection("orders")
             .add(order)
+            .addOnSuccessListener {
+                Log.d("Firestore", "Order saved successfully")
+            }
+            .addOnFailureListener { e ->
+                Log.e("Firestore", "Error saving order", e)
+            }
+    }
+
+    suspend fun saveCoin(coin: Coin) {
+        db.collection("coins")
+            .add(coin)
             .addOnSuccessListener {
                 Log.d("Firestore", "Order saved successfully")
             }
