@@ -1,15 +1,14 @@
 package org.myapp.mymeal
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.launch
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.myapp.mymeal.controller.FirestoreRepository
 
 @Composable
 fun UsersListScreen(repository: FirestoreRepository) {

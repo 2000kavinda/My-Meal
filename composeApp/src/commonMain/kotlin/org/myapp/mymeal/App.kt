@@ -1,12 +1,12 @@
 package org.myapp.mymeal
 
-import AuthService
+import org.myapp.mymeal.controller.AuthService
 import androidx.compose.runtime.Composable
-import org.jetbrains.compose.resources.painterResource
+import org.myapp.mymeal.controller.FirestoreRepository
 
 @Composable
 fun App() {
-    // Initialize FirestoreRepository and AuthService
+    // Initialize FirestoreRepository and org.myapp.mymeal.controller.AuthService
     val repository = FirestoreRepository()
     // Initialize the shared state holder (SharedViewModel)
     val sharedViewModel = SharedViewModel()
@@ -20,7 +20,7 @@ fun App() {
     // Pass the navigation manager, authService, firestoreRepository, and sharedViewModel to the NavigationHost
     NavigationHost(
         navigationManager = navigationManager,
-        authService = authService,  // Pass AuthService for authentication handling
+        authService = authService,  // Pass org.myapp.mymeal.controller.AuthService for authentication handling
         firestoreRepository = repository, // Pass FirestoreRepository for saving users
         sharedViewModel = sharedViewModel // Pass SharedViewModel for sharing state
     )

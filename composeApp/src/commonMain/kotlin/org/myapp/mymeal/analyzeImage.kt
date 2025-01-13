@@ -26,7 +26,7 @@ suspend fun analyzeImages(imageBitmap: ImageBitmap?): String {
 
     return withContext(Dispatchers.IO) {
         val client = HttpClient(CIO)
-        val apiUserToken = "9998d8cb4134a519d1cd2a54ef32ac4d885809e7"
+        val apiUserToken = "07034037979061f548f175ff21f1a5db734182e9"
         val headers = mapOf("Authorization" to "Bearer $apiUserToken")
 
         try {

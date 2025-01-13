@@ -1,8 +1,12 @@
-package org.myapp.mymeal
+package org.myapp.mymeal.controller
 
 import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
+import org.myapp.mymeal.Meal
+import org.myapp.mymeal.Order
+import org.myapp.mymeal.User
+import org.myapp.mymeal.model.Card
 import java.time.LocalDate
 
 class FirestoreRepository {
@@ -189,6 +193,32 @@ class FirestoreRepository {
             false // An error occurred
         }
     }
+    suspend fun reduceCoinAmountByEmail(email: String, reductionAmount: Double ): Boolean {
+        return try {
+            // Query the "coins" collection to find a document with the specified email
+            val querySnapshot = db.collection("coins").whereEqualTo("email", email).get().await()
+            val document = querySnapshot.documents.firstOrNull()
+
+            if (document != null) {
+                // Retrieve the current amount and reduce it by 5.5
+                val currentAmount = document.getDouble("count") ?: return false
+                if (currentAmount >= reductionAmount) {
+                    val newAmount = currentAmount - reductionAmount
+
+                    // Update the "amount" field in the document
+                    document.reference.update("count", newAmount).await()
+                    true // Update was successful
+                } else {
+                    false // Insufficient balance
+                }
+            } else {
+                false // No document found for the given email
+            }
+        } catch (e: Exception) {
+            false // An error occurred
+        }
+    }
+
 
     suspend fun saveOrder(order: Order) {
         db.collection("orders")

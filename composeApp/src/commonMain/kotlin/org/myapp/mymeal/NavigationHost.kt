@@ -1,6 +1,6 @@
 package org.myapp.mymeal
 
-import AuthService
+import org.myapp.mymeal.controller.AuthService
 import GameScreen
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -8,6 +8,12 @@ import androidx.compose.runtime.getValue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.myapp.mymeal.controller.FirestoreRepository
+import org.myapp.mymeal.view.History.HistoryScreen
+import org.myapp.mymeal.view.HomeAndBuyMeal.MealDetailsScreen
+import org.myapp.mymeal.view.HomeAndBuyMeal.MealListScreen
+import org.myapp.mymeal.view.authentication.SignUpScreen
+import org.myapp.mymeal.view.authentication.SignInScreen
 import java.security.MessageDigest
 
 @Composable
@@ -20,14 +26,14 @@ fun NavigationHost(
     val currentScreen by navigationManager.currentScreen.collectAsState()
 
     when (currentScreen) {
-        is Screen.SignIn -> SignInScreen(
+        is Screen.SignInScreen -> SignInScreen(
             authService = authService,
             isLoading = false,
             message = "",
             onSignUp = { email, password ->
                 // Implement the SignIn logic if needed
                 // Navigate to SaveUserScreen after successful sign-in (if needed)
-                navigationManager.navigateTo(Screen.SaveUser)
+                navigationManager.navigateTo(Screen.SignUpScreen)
             },
             onSignIn = { email, password ->
                 // Implement the SignIn logic if needed
@@ -36,7 +42,7 @@ fun NavigationHost(
             },
             sharedViewModel = sharedViewModel,
         )
-        is Screen.SaveUser -> SaveUserScreen(
+        is Screen.SignUpScreen -> SignUpScreen(
             isLoading = false,
             message = "",
             onSave = { email, password,gender, activityLevel,  goal ,onSuccess ->
@@ -112,11 +118,11 @@ fun onSaveUser(
                 navigationManager.navigateTo(Screen.MealList)
             } else {
                 // Handle failure (navigate to SignIn or show a failure message)
-                navigationManager.navigateTo(Screen.SignIn)
+                navigationManager.navigateTo(Screen.SignInScreen)
             }
         } catch (e: Exception) {
             // Handle exception (show error message and navigate to SignIn)
-            navigationManager.navigateTo(Screen.SignIn)
+            navigationManager.navigateTo(Screen.SignInScreen)
         }
     }
 }

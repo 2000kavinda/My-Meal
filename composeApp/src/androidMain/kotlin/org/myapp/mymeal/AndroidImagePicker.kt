@@ -45,8 +45,12 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import org.jetbrains.compose.resources.painterResource
 import org.myapp.mymeal.NavigationProvider.navigationManager
+import org.myapp.mymeal.components.CustomButton
+import org.myapp.mymeal.controller.FirestoreRepository
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun AndroidImagePicker() {
@@ -55,11 +59,15 @@ fun AndroidImagePicker() {
     var nutritionalInfo by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
+    val sharedViewModel=SharedViewModel();
+    val currentUserEmail by sharedViewModel.currentUserEmail.collectAsState()
 
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
         uri?.let {
             val inputStream: InputStream? = context.contentResolver.openInputStream(it)
             val bitmap = BitmapFactory.decodeStream(inputStream)
+
+
             selectedImage = bitmap.asImageBitmap()
             inputStream?.close()
 
@@ -67,6 +75,74 @@ fun AndroidImagePicker() {
             coroutineScope.launch {
                 isLoading = true
                 nutritionalInfo = analyzeImages(selectedImage)
+                val rows = nutritionalInfo.split("\n")
+
+// Create an array of key-value pairs (nutrient and value) by splitting rows
+                val nutritionArray = rows.mapNotNull { row ->
+                    val parts = row.split(":")
+                    if (parts.size == 2) {
+                        val nutrient = parts[0].trim()
+                        val value = parts[1].trim()
+                        nutrient to value // Create a key-value pair
+                    } else {
+                        null // Skip invalid rows
+                    }
+                }.toTypedArray()
+
+// Debugging: print the array to see the contents
+                println("Nutritional Information: ")
+                nutritionArray.forEach { println("Nutrient: ${it.first}, Value: ${it.second}") }
+
+                // Create a function to find value by nutrient name
+                fun getNutrientValue(nutrient: String): Double {
+                    // Debugging: check if we find the nutrient
+                    val found = nutritionArray.firstOrNull { it.first.equals(nutrient, ignoreCase = true) }
+                    if (found != null) {
+                        println("Found $nutrient: ${found.second}")
+                    } else {
+                        println("Nutrient $nutrient not found!")
+                    }
+                    return found?.second?.toDoubleOrNull() ?: 0.0
+                }
+
+// Save the data using the nutritionArray values
+                val firestoreRepository = FirestoreRepository()
+
+                firestoreRepository.saveOrder(
+                    Order(
+                        name = "",
+                        calories = getNutrientValue("Calories"),
+                        carbohydrates = getNutrientValue("Carbohydrates"),
+                        proteins = getNutrientValue("Protein"),
+                        fats = getNutrientValue("Total Fat"),
+                        price = 0.0,
+                        photo = "", // Replace with the actual photo URL if available
+                        email = currentUserEmail?:"", // Replace with the user's email from your app context
+                        day = LocalDate.now().format(DateTimeFormatter.ISO_DATE),
+                        description = "",
+                        type = ""
+                    )
+                )
+
+
+
+                /* val order = Order(
+                     name = "",
+                     calories = nutritionMap["Calories"]?.toDoubleOrNull() ?: 0.0,
+                     carbohydrates = nutritionMap["Carbohydrates"]?.toDoubleOrNull() ?: 0.0,
+                     proteins = nutritionMap["Protein"]?.toDoubleOrNull() ?: 0.0,
+                     fats = nutritionMap["Total Fat"]?.toDoubleOrNull() ?: 0.0,
+                     price = 0.0,
+                     photo = "", // Replace with the actual photo URL if available
+                     email = "user@example.com", // Replace with the user's email from your app context
+                     day = LocalDate.now().format(DateTimeFormatter.ISO_DATE),
+                     description = "",
+                     type = "" // Replace with a more specific type if applicable
+                 )
+
+                 // Save the order to Firestore
+                 saveOrderToFirestore(order)*/
+
                 isLoading = false
             }
         }
@@ -113,75 +189,28 @@ fun CenterLogoUI(onPickImage: () -> Unit) {
         Spacer(modifier = Modifier.height(35.dp)) // Add spacing between image and button
 
         // Styled Button with Icon and Text
-        Button(
+        CustomButton(
+            text = "Insert External Nutrition",
             onClick = onPickImage,
-            modifier = Modifier
-                .width((screenWidthDp * 0.8).dp) // Set button width
-                .height(70.dp) // Set button height
-                .padding(8.dp), // Add padding around the button
-            colors = ButtonDefaults.buttonColors(
-                backgroundColor = Color(0xFF002945) // Set button background color (HEX: #FF0000 - Red)
-            ),
-            shape = MaterialTheme.shapes.medium.copy(
-                CornerSize(12.dp) // Set border radius to 20.dp
-            ),
-            //border = BorderStroke(2.dp, Color.Blue) // Set border with color blue
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(16.dp) // Space between icon and text
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_gallery), // Replace with your gallery icon resource
-                    contentDescription = "Gallery Icon",
-                    tint = Color.White, // Set the icon color
-                    modifier = Modifier.size(30.dp) // Set the icon size
-                )
-                Text(
-                    "Insert External Nutrition",
-                    color = Color.White, // Set text color
-                    //fontWeight = FontWeight.Bold, // Bold the text
-                    fontSize = 18.sp // Adjust text size
-                )
-            }
-        }
+            modifier = Modifier.width((screenWidthDp * 0.8).dp),
+            backgroundColor = Color(0xFF002945),
+            textColor = Color.White,
+            icon = R.drawable.ic_gallery,
+            iconTint = Color.White
+        )
         //Spacer(modifier = Modifier.height(5.dp)) // Add spacing between image and button
 
-
-        Button(
+        CustomButton(
+            text = "Skip for Now",
             onClick={
                 navigationManager.navigateTo(Screen.MealList)
             },
-            modifier = Modifier
-                .width((screenWidthDp * 0.8).dp) // Set button width
-                .height(70.dp) // Set button height
-                .padding(8.dp), // Add padding around the button
-            colors = ButtonDefaults.buttonColors(
-                backgroundColor = Color(0xFFFFFFFF) // Set button background color (HEX: #FF0000 - Red)
-            ),
-            shape = MaterialTheme.shapes.medium.copy(
-                CornerSize(12.dp) // Set border radius to 20.dp
-            ),
-            border = BorderStroke(2.dp, Color(0xFF002945)) // Set border with color blue
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(16.dp) // Space between icon and text
-            ) {
-                /*Icon(
-                    painter = painterResource(id = R.drawable.ic_gallery), // Replace with your gallery icon resource
-                    contentDescription = "Gallery Icon",
-                    tint = Color(0xFFCB823D), // Set the icon color
-                    modifier = Modifier.size(30.dp) // Set the icon size
-                )*/
-                Text(
-                    "Skip for Now",
-                    color = Color(0xFF002945), // Set text color
-                    //fontWeight = FontWeight.Bold, // Bold the text
-                    fontSize = 18.sp // Adjust text size
-                )
-            }
-        }
+            modifier = Modifier.width((screenWidthDp * 0.8).dp),
+            backgroundColor = Color.White,
+            textColor = Color(0xFF002945),
+            borderColor = Color(0xFF002945) // Add border
+        )
+
     }
 }
 
@@ -329,139 +358,7 @@ fun NutrientRow(nutrient: String, value: String) {
         Text(value, style = MaterialTheme.typography.body1)
     }
 }
-/*
-suspend fun analyzeImage(imageBitmap: ImageBitmap?): String {
-    if (imageBitmap == null) return "No image selected!"
 
-    val client = HttpClient(CIO)
-    val apiUserToken = "842817cd0d4807a68c87b49b6cd9df67e0feb508"
-    val headers = mapOf("Authorization" to "Bearer $apiUserToken")
-
-    try {
-        // Convert ImageBitmap to JPEG ByteArray
-        val byteArray = imageBitmap.toJpegByteArray()
-
-        // Upload Image
-        val imageUploadResponse: HttpResponse = client.submitFormWithBinaryData(
-            url = "https://api.logmeal.com/v2/image/segmentation/complete",
-            formData = formData {
-                append(
-                    "image",
-                    byteArray,
-                    Headers.build {
-                        append(HttpHeaders.ContentType, ContentType.Image.JPEG.toString())
-                        append(HttpHeaders.ContentDisposition, "form-data; name=\"image\"; filename=\"image.jpg\"")
-                    }
-                )
-            },
-            block = {
-                headers {
-                    append(HttpHeaders.Authorization, "Bearer $apiUserToken")
-                }
-            }
-        )
-
-        val uploadResponseText = imageUploadResponse.bodyAsText()
-        println("Upload Response: $uploadResponseText")
-
-        val jsonResponse = Json.parseToJsonElement(uploadResponseText)
-        val imageId = jsonResponse.jsonObject["imageId"]?.jsonPrimitive?.content
-            ?: return "Error: Image upload failed, no imageId received."
-
-        // Fetch Nutritional Info
-        val nutritionalInfoResponse: HttpResponse = client.post("https://api.logmeal.com/v2/recipe/nutritionalInfo") {
-            contentType(ContentType.Application.Json)
-            setBody("""{"imageId": "$imageId"}""")
-            headers {
-                append(HttpHeaders.Authorization, "Bearer $apiUserToken")
-            }
-        }
-
-        val nutritionalInfoText = nutritionalInfoResponse.bodyAsText()
-        println("Nutritional Info Response: $nutritionalInfoText")
-
-        val nutritionalInfoJson = Json.parseToJsonElement(nutritionalInfoText).jsonObject
-        println("Full Nutritional Info Response: $nutritionalInfoJson")
-
-        // Check for any error in the response
-        nutritionalInfoJson["error"]?.jsonPrimitive?.let {
-            return "Error: ${it.content}"
-        }
-
-        // Extract nutritional info
-        val nutritionalInfo = nutritionalInfoJson["nutritional_info"]?.jsonObject
-        if (nutritionalInfo != null) {
-            val nutritionalInfoMap = mutableListOf<String>()
-
-            var calories = 0f
-            nutritionalInfo["calories"]?.jsonPrimitive?.let {
-                calories = it.content.toFloat()
-                nutritionalInfoMap.add("Calories: %.1f Kcal".format(calories))
-            }
-
-            val totalNutrients = nutritionalInfo["totalNutrients"]?.jsonObject
-
-            var carbs = 0.0
-            totalNutrients?.get("CHOCDF")?.jsonObject?.let {
-                carbs = it["quantity"]?.jsonPrimitive?.doubleOrNull ?: 0.0
-                val unit = it["unit"]?.jsonPrimitive?.content
-                nutritionalInfoMap.add("Carbs (CHOCDF): %.1f $unit".format(carbs))
-            }
-
-            var fat = 0.0
-            totalNutrients?.get("FAT")?.jsonObject?.let {
-                fat = it["quantity"]?.jsonPrimitive?.doubleOrNull ?: 0.0
-                val unit = it["unit"]?.jsonPrimitive?.content
-                nutritionalInfoMap.add("Fat (FAT): %.1f $unit".format(fat))
-            }
-
-            var protein = 0.0
-            totalNutrients?.get("PROCNT")?.jsonObject?.let {
-                protein = it["quantity"]?.jsonPrimitive?.doubleOrNull ?: 0.0
-                val unit = it["unit"]?.jsonPrimitive?.content
-                nutritionalInfoMap.add("Protein (PROCNT): %.1f $unit".format(protein))
-            }
-
-            var sugar = 0.0
-            totalNutrients?.get("SUGAR")?.jsonObject?.let {
-                sugar = it["quantity"]?.jsonPrimitive?.doubleOrNull ?: 0.0
-                val unit = it["unit"]?.jsonPrimitive?.content
-                nutritionalInfoMap.add("Sugar (SUGAR): %.1f $unit".format(sugar))
-            }
-
-            // Create an Order object
-            val order = Order(
-                name = "Sample Meal", // Replace with the actual name of the meal
-                calories = calories.toDouble(),
-                carbohydrates = carbs,
-                proteins = protein,
-                fats = fat,
-                price = 15.0, // Replace with actual price
-                photo = "https://example.com/meal.jpg", // Replace with actual photo URL
-                email = "user@example.com" // Replace with actual user email
-            )
-
-            // Save to Firestore
-            saveOrderToFirestore(order)
-
-            // Return the nutritional information as a string
-            return if (nutritionalInfoMap.isNotEmpty()) {
-                nutritionalInfoMap.joinToString("\n")
-            } else {
-                "Error: Nutritional info not found."
-            }
-        } else {
-            return "Error: Nutritional info not found."
-        }
-
-    } catch (e: Exception) {
-        println("Error occurred: ${e.localizedMessage}")
-        e.printStackTrace()
-        return "Error: ${e.localizedMessage}"
-    } finally {
-        client.close()
-    }
-}*/
 
 // Function to save order to Firestore
 suspend fun saveOrderToFirestore(order: Order) {
@@ -477,24 +374,4 @@ suspend fun saveOrderToFirestore(order: Order) {
 
 
 
-/*
-// Extension function to convert ImageBitmap to JPEG ByteArray
-fun ImageBitmap.toJpegByteArrayh(): ByteArray {
-    val bitmap = Bitmap.createBitmap(this.width, this.height, Bitmap.Config.ARGB_8888)
-    val outputStream = ByteArrayOutputStream()
-    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
-    return outputStream.toByteArray()
-}
-fun Bitmap.toJpegByteArray(quality: Int = 100): ByteArray {
-    val outputStream = ByteArrayOutputStream()
-    // Compress the Bitmap into JPEG format and write to the output stream
-    this.compress(Bitmap.CompressFormat.JPEG, quality, outputStream)
-    return outputStream.toByteArray()
-}*//*
-fun ImageBitmap.toJpegByteArray(quality: Int = 100): ByteArray {
-    val androidBitmap = this.asAndroidBitmap()
-    val outputStream = ByteArrayOutputStream()
-    androidBitmap.compress(Bitmap.CompressFormat.JPEG, quality, outputStream)
-    return outputStream.toByteArray()
-}*/
 

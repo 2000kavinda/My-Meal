@@ -1,7 +1,6 @@
 package org.myapp.mymeal
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -9,17 +8,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -29,18 +20,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.DialogProperties
 //import coil.compose.AsyncImage
-import coil3.compose.AsyncImage
 import io.ktor.client.*
-import io.ktor.client.request.*
-import io.ktor.client.statement.*
-import io.ktor.http.*
 import kotlinx.coroutines.launch
 import org.myapp.mymeal.NavigationProvider.navigationManager
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+import org.myapp.mymeal.components.BottomNavigationBar
+import org.myapp.mymeal.controller.FirestoreRepository
+import org.myapp.mymeal.model.HealthMetrics
+import org.myapp.mymeal.view.HomeAndBuyMeal.NutrientCard
+import org.myapp.mymeal.view.HomeAndBuyMeal.NutriCard
+import org.myapp.mymeal.view.HomeAndBuyMeal.calculateHealthMetrics
+import org.myapp.mymeal.view.HomeAndBuyMeal.callOpenAIAPI
 
 
 data class HealthMetrics1(
@@ -111,60 +101,13 @@ fun ProfileScreen(
     Scaffold(
 
                 bottomBar = {
-            BottomNavigation(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-                .background(color = Color(0xFF002945), shape = RoundedCornerShape(16.dp)), // Set background color and corner radius
-                backgroundColor = Color(0xFF002945)
-            ) {
-                BottomNavigationItem(
-                    icon = {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Icon(Icons.Filled.Home, contentDescription = "Home", tint = Color.White)
-                            Text("Home", color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                    BottomNavigationBar(
+                        selectedItem = selectedItem.value,
+                        onItemSelected = { selectedItem.value = it },
+                        onProfileClick = {
+                            navigationManager.navigateTo(Screen.ProfileScreen(meal = meal))
                         }
-                    },
-                    //icon = { Icon(Icons.Filled.Home, contentDescription = "Home", tint = Color.White) }, // Set icon color to black
-                    selected = selectedItem.value == 0,
-                    onClick = {navigationManager.navigateTo(Screen.MealList) }
-                )
-                BottomNavigationItem(
-                    icon = {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Icon(Icons.Filled.PlayArrow, contentDescription = "Play", tint = Color.White)
-                            Text("Play", color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Bold)
-                        }
-                    },
-                    //icon = { Icon(Icons.Filled.PlayArrow, contentDescription = "Search", tint = Color.White) }, // Set icon color to black
-                    selected = selectedItem.value == 1,
-                    onClick = { navigationManager.navigateTo(Screen.PlayScreen) }
-                )
-                BottomNavigationItem(
-                    icon = {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Icon(Icons.Filled.Menu, contentDescription = "History", tint = Color.White)
-                            Text("History", color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Bold)
-                        }
-                    },
-                    // icon = { Icon(Icons.Filled.Favorite, contentDescription = "Notifications", tint = Color.White) }, // Set icon color to black
-                    selected = selectedItem.value == 2,
-                    onClick = { navigationManager.navigateTo(Screen.History) }
-                )
-                BottomNavigationItem(
-                    icon = {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Icon(Icons.Filled.AccountCircle, contentDescription = "Profile", tint = Color.White)
-                            Text("Profile", color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Bold)
-                        }
-                    },
-                    // icon = { Icon(Icons.Filled.AccountCircle, contentDescription = "Profile", tint = Color.White) }, // Set icon color to black
-                    selected = selectedItem.value == 3,
-                    onClick = {
-                        navigationManager.navigateTo(Screen.ProfileScreen(meal = meal))
-                    },
-                )
-            }
+                    )
         }
     ) { padding ->
         val scrollState = rememberScrollState()
@@ -456,7 +399,7 @@ fun MealAdditionalDetails1(
 
 
 @Composable
-fun HealthMetricsDisplay1(healthMetrics: HealthMetrics,meal: Meal) {
+fun HealthMetricsDisplay1(healthMetrics: HealthMetrics, meal: Meal) {
     Column(horizontalAlignment = Alignment.Start) {
         //Text(text = "Health Metrics", style = MaterialTheme.typography.h6)
         //Spacer(modifier = Modifier.height(8.dp))
@@ -494,7 +437,7 @@ fun NutritionDetails1(healthMetrics: HealthMetrics) {
             // Center-aligned content
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 // Calories ring chart
-                NutrientCards(value = healthMetrics.calorieAverage.toInt(), color = Color(0xFFFDB022))
+                NutriCard(value = healthMetrics.calorieAverage.toInt(), color = Color(0xFFFDB022))
 
                 Spacer(modifier = Modifier.height(4.dp))
 

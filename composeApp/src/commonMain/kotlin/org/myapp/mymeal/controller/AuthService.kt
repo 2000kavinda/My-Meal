@@ -1,8 +1,9 @@
-import org.myapp.mymeal.FirestoreRepository
+package org.myapp.mymeal.controller
+
 import org.myapp.mymeal.SharedViewModel
 import java.security.MessageDigest
 
-class AuthService(private val repository: FirestoreRepository,private val sharedViewModel: SharedViewModel) {
+class AuthService(private val repository: FirestoreRepository, private val sharedViewModel: SharedViewModel) {
 
     private fun encryptPassword(password: String): String {
         val messageDigest = MessageDigest.getInstance("SHA-256")

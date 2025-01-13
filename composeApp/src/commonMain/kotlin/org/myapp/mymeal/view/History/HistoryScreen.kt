@@ -1,39 +1,26 @@
-package org.myapp.mymeal
-import androidx.compose.foundation.background
+package org.myapp.mymeal.view.History
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import io.ktor.client.HttpClient
-import io.ktor.client.request.header
-import io.ktor.client.request.post
-import io.ktor.client.request.setBody
-import io.ktor.client.statement.HttpResponse
-import io.ktor.client.statement.bodyAsText
-import io.ktor.http.ContentType
-import io.ktor.http.HttpHeaders
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.jsonArray
-import kotlinx.serialization.json.jsonObject
-import kotlinx.serialization.json.jsonPrimitive
+import org.myapp.mymeal.Meal
 import org.myapp.mymeal.NavigationProvider.navigationManager
+import org.myapp.mymeal.NutritionRepository
+import org.myapp.mymeal.NutritionResponse
+import org.myapp.mymeal.Screen
+import org.myapp.mymeal.view.HomeAndBuyMeal.calculateHealthMetrics
+import org.myapp.mymeal.components.BottomNavigationBar
+import org.myapp.mymeal.controller.FirestoreRepository
+import org.myapp.mymeal.model.HealthMetrics
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -54,7 +41,13 @@ fun HistoryScreen(
     var healthMetrics by remember { mutableStateOf<HealthMetrics?>(null) }
     var coins by remember { mutableStateOf(0.0) }
     var aiRecommendations by remember { mutableStateOf("") }
-
+    var meal = Meal(
+        name = "Default Meal",
+        photo = "https://example.com/default-photo.jpg",
+        price = 0.0,
+        description = "Default description",
+        type = "Default type"
+    )
     val selectedItem = remember { mutableStateOf(0) }
 
     LaunchedEffect(Unit) {
@@ -109,53 +102,16 @@ fun HistoryScreen(
         }
 
         // Bottom Navigation Bar
-        BottomNavigation(
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-                .align(Alignment.BottomCenter), // Anchors the bar at the bottom
-            backgroundColor = Color(0xFF002945),
-            elevation = 8.dp // Add elevation for better visibility
-        ) {
-            BottomNavigationItem(
-                icon = {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(Icons.Filled.Home, contentDescription = "Home", tint = Color.White)
-                        Text("Home", color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Bold)
-                    }
-                },
-                selected = selectedItem.value == 0,
-                onClick = { selectedItem.value = 0 }
-            )
-            BottomNavigationItem(
-                icon = {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(Icons.Filled.PlayArrow, contentDescription = "Play", tint = Color.White)
-                        Text("Play", color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Bold)
-                    }
-                },
-                selected = selectedItem.value == 1,
-                onClick = { selectedItem.value = 1 }
-            )
-            BottomNavigationItem(
-                icon = {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(Icons.Filled.Menu, contentDescription = "History", tint = Color.White)
-                        Text("History", color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Bold)
-                    }
-                },
-                selected = selectedItem.value == 2,
-                onClick = { selectedItem.value = 2 }
-            )
-            BottomNavigationItem(
-                icon = {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(Icons.Filled.AccountCircle, contentDescription = "Profile", tint = Color.White)
-                        Text("Profile", color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Bold)
-                    }
-                },
-                selected = selectedItem.value == 3,
-                onClick = { /* Navigate to Profile */ }
+                .align(Alignment.BottomCenter)
+                ) {
+            BottomNavigationBar(
+                selectedItem = selectedItem.value,
+                onItemSelected = { selectedItem.value = it },
+                onProfileClick = {
+                    navigationManager.navigateTo(Screen.ProfileScreen(meal = meal))
+                }
             )
         }
     }
@@ -238,4 +194,7 @@ fun MealCard1(meal: Meal, onMealClick: (Meal) -> Unit) {
         }
     }
 }
+
+
+
 

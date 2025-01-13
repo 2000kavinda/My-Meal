@@ -1,27 +1,13 @@
 package org.myapp.mymeal
 
-import AuthService
-import GameScreen
-import MealService
-
 import com.google.firebase.FirebasePlatform
 import android.app.Application
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
-import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import createHttpClient
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.FirebaseOptions
 import dev.gitlive.firebase.initialize
-import io.ktor.client.engine.cio.CIO
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers.IO
 import java.security.MessageDigest
 /*
 fun main() = application {
@@ -62,7 +48,7 @@ fun main() = application {
         val client = createHttpClient(CIO)
 
         val repository = FirestoreRepository()
-        val authService = AuthService(repository)
+        val authService = org.myapp.mymeal.controller.AuthService(repository)
         val mealService = MealService(client)
         val coroutineScope = CoroutineScope(Dispatchers.IO)
         var isLoading by remember { mutableStateOf(false) } // Track loading state
@@ -193,7 +179,7 @@ fun main() = application {
     ) {/*
         val client = createHttpClient(CIO) // Assume this client is configured for HTTP calls if needed
         val repository = FirestoreRepository() // Firestore repository to interact with Firestore
-        val authService = AuthService(repository) // Assuming AuthService is for handling authentication
+        val authService = org.myapp.mymeal.controller.AuthService(repository) // Assuming org.myapp.mymeal.controller.AuthService is for handling authentication
         val mealService = MealService(client) // Meal service for additional functionalities if needed
         val coroutineScope = CoroutineScope(IO) // Coroutine scope for managing background tasks
 

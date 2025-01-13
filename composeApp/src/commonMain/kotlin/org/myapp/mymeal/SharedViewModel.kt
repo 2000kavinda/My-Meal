@@ -38,4 +38,11 @@ class SharedViewModel {
     fun setPayAmount(amount: Double) {
         _payAmount.value = amount
     }
+
+    private val _coinAmount = MutableStateFlow<Double?>(0.0)
+    val coinAmount: StateFlow<Double?> = _coinAmount
+
+    fun setCoinAmount(coin: Double) {
+        _coinAmount.value = coin
+    }
 }

@@ -1,4 +1,4 @@
-package org.myapp.mymeal
+package org.myapp.mymeal.model
 
 data class Card(
     val balance: Double = 0.0,

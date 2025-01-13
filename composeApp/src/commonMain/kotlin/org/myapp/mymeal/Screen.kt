@@ -1,10 +1,10 @@
 package org.myapp.mymeal
 
 sealed class Screen {
-    object SignIn : Screen()
+    object SignInScreen : Screen()
 
 
-    object SaveUser : Screen()
+    object SignUpScreen : Screen()
     object MealList : Screen()
     object History : Screen()
     object GameScreen : Screen()

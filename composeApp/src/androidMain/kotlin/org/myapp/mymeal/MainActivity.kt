@@ -1,6 +1,6 @@
 /*package org.myapp.mymeal
 
-import AuthService
+import org.myapp.mymeal.controller.AuthService
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -80,7 +80,7 @@ fun encryptPassword(password: String): String {
 /*
 package org.myapp.mymeal
 
-import AuthService
+import org.myapp.mymeal.controller.AuthService
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -91,7 +91,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 
 class MainActivity : ComponentActivity() {
 
-    private val authService = AuthService(FirestoreRepository()) // Replace with your actual service instance
+    private val authService = org.myapp.mymeal.controller.AuthService(FirestoreRepository()) // Replace with your actual service instance
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -136,7 +136,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun App(
-    authService: AuthService,
+    authService: org.myapp.mymeal.controller.AuthService,
     isLoading: Boolean,
     message: String,
     onSignIn: (String, String) -> Unit
@@ -154,7 +154,7 @@ fun App(
 @Composable
 fun AppAndroidPreview() {
     App(
-        authService = AuthService(FirestoreRepository()), // Mock or real auth service for preview
+        authService = org.myapp.mymeal.controller.AuthService(FirestoreRepository()), // Mock or real auth service for preview
         isLoading = false,
         message = "",
         onSignIn = { _, _ -> }
@@ -173,7 +173,7 @@ import androidx.compose.runtime.*
 /*
 class MainActivity : ComponentActivity() {
 
-    private val authService = AuthService(FirestoreRepository()) // Replace with your actual service instance
+    private val authService = org.myapp.mymeal.controller.AuthService(FirestoreRepository()) // Replace with your actual service instance
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -219,7 +219,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun App(
-    authService: AuthService,
+    authService: org.myapp.mymeal.controller.AuthService,
     isLoading: Boolean,
     message: String,
     onSignIn: (String, String) -> Unit
@@ -237,7 +237,7 @@ fun App(
 @Composable
 fun AppAndroidPreview() {
     App(
-        authService = AuthService(FirestoreRepository()), // Mock or real auth service for preview
+        authService = org.myapp.mymeal.controller.AuthService(FirestoreRepository()), // Mock or real auth service for preview
         isLoading = false,
         message = "",
         onSignIn = { _, _ -> }
