@@ -246,6 +246,30 @@ class FirestoreRepository {
         }
     }
 
+    suspend fun increaseCoinAmountByEmail(email: String, increaseAmount: Double ): Boolean {
+        return try {
+            // Query the "coins" collection to find a document with the specified email
+            val querySnapshot = db.collection("coins").whereEqualTo("email", email).get().await()
+            val document = querySnapshot.documents.firstOrNull()
+
+            if (document != null) {
+                // Retrieve the current amount and increase it by the specified amount
+                val currentAmount = document.getDouble("count") ?: return false
+                val newAmount = currentAmount + increaseAmount
+
+                // Update the "count" field in the document
+                document.reference.update("count", newAmount).await()
+                true // Update was successful
+            } else {
+                false // No document found for the given email
+            }
+        } catch (e: Exception) {
+            false // An error occurred
+        }
+    }
+
+
+
 
     suspend fun saveOrder(order: Order) {
         db.collection("orders")

@@ -16,5 +16,6 @@ object ColorThemes{
     val ProteinColor = Color(0xFF12B76A)
     val FatColor = Color(0xFFF97066)
     val CarbColor = Color(0xFFFD853A)
+    val UvColor = Color(0xFFFA4536)
 }
 

@@ -89,6 +89,8 @@ fun NavigationHost(
                 //navigationManager.navigateTo(Screen.ProfileScreen(meal))
             },sharedViewModel=sharedViewModel)
         is Screen.GameScreen -> GameScreen(
+            sharedViewModel = sharedViewModel,
+
             )
     }
 }
