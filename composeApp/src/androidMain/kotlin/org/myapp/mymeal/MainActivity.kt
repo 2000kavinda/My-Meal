@@ -262,7 +262,7 @@ fun AndroidApp(navigationController: NavigationController) {
     when (navigationController.currentScreen.value) {
         Screen.MealList -> MealListScreen(repository = FirestoreRepository(), navigationController)
         Screen.MealDetails -> navigationController.mealDetailsArgs?.let { meal ->
-            MealDetailsScreen(meal = meal as org.myapp.mymeal.Meal , onBack = { navigationController.goBack() })
+            MealDetailsScreen(meal = meal as org.myapp.mymeal.model.Meal , onBack = { navigationController.goBack() })
         }
     }
 }*/

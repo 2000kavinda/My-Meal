@@ -21,9 +21,9 @@ import org.myapp.mymeal.components.CustomOutlinedTextField
 import org.myapp.mymeal.components.CustomPasswordTextField
 import org.myapp.mymeal.components.LoadingButton
 import org.myapp.mymeal.utils.Constants
-import org.myapp.mymeal.utils.PrimaryBgColor
-import org.myapp.mymeal.utils.PrimaryButtonColor
-import org.myapp.mymeal.utils.PrimaryTextColor
+import org.myapp.mymeal.ui.theme.PrimaryBgColor
+import org.myapp.mymeal.ui.theme.PrimaryButtonColor
+import org.myapp.mymeal.ui.theme.PrimaryTextColor
 
 @Composable
 fun SignInScreen(

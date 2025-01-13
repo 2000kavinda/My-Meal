@@ -16,13 +16,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
-import org.myapp.mymeal.NavigationProvider.navigationManager
-import org.myapp.mymeal.Screen
+import org.myapp.mymeal.navigation.NavigationProvider.navigationManager
+import org.myapp.mymeal.navigation.Screen
 import org.myapp.mymeal.components.CustomDropdown
 import org.myapp.mymeal.components.CustomOutlinedTextField
 import org.myapp.mymeal.components.CustomPasswordTextField
 import org.myapp.mymeal.utils.Constants
-import org.myapp.mymeal.utils.PrimaryBgColor
+import org.myapp.mymeal.ui.theme.PrimaryBgColor
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable

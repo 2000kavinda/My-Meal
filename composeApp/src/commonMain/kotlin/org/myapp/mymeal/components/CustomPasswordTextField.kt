@@ -7,18 +7,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import coil3.compose.AsyncImage
-import kotlinx.coroutines.launch
-import org.myapp.mymeal.components.CustomOutlinedTextField
-import org.myapp.mymeal.utils.SecondaryTextColor
+import org.myapp.mymeal.ui.theme.SecondaryTextColor
 
 @Composable
 fun CustomPasswordTextField(

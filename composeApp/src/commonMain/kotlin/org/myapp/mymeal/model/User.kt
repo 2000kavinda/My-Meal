@@ -1,4 +1,4 @@
-package org.myapp.mymeal
+package org.myapp.mymeal.model
 
 
 

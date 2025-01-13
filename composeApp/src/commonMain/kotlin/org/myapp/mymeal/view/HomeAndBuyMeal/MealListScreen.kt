@@ -8,9 +8,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import org.myapp.mymeal.Meal
-import org.myapp.mymeal.NavigationProvider.navigationManager
-import org.myapp.mymeal.Screen
+import org.myapp.mymeal.model.Meal
+import org.myapp.mymeal.navigation.NavigationProvider.navigationManager
+import org.myapp.mymeal.navigation.Screen
 import org.myapp.mymeal.components.BottomNavigationBar
 import org.myapp.mymeal.components.MealCard
 import org.myapp.mymeal.controller.FirestoreRepository

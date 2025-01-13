@@ -1,4 +1,4 @@
-package org.myapp.mymeal
+package org.myapp.mymeal.navigation
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

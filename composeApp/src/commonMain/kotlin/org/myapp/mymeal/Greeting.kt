@@ -1,9 +1,0 @@
-package org.myapp.mymeal
-
-class Greeting {
-    private val platform = getPlatform()
-
-    fun greet(): String {
-        return "Hello, ${platform.name}!"
-    }
-}

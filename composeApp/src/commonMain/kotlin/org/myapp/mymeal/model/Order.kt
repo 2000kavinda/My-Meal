@@ -1,6 +1,4 @@
-package org.myapp.mymeal
-
-import jdk.jfr.Description
+package org.myapp.mymeal.model
 
 data class Order(
     val name: String = "",

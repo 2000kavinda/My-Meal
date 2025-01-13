@@ -9,11 +9,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 //import coil.compose.AsyncImage
-import org.myapp.mymeal.Meal
+import org.myapp.mymeal.model.Meal
 import org.myapp.mymeal.NutritionResponse
 import org.myapp.mymeal.SharedViewModel
 import org.myapp.mymeal.model.HealthMetrics
-import org.myapp.mymeal.utils.PrimaryButtonColor
+import org.myapp.mymeal.ui.theme.PrimaryButtonColor
 
 @Composable
 fun MealAdditionalDetails(

@@ -1,4 +1,4 @@
-package org.myapp.mymeal.utils
+package org.myapp.mymeal.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

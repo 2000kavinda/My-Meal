@@ -12,11 +12,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import io.ktor.client.HttpClient
-import org.myapp.mymeal.Meal
-import org.myapp.mymeal.NavigationProvider.navigationManager
+import org.myapp.mymeal.model.Meal
+import org.myapp.mymeal.navigation.NavigationProvider.navigationManager
 import org.myapp.mymeal.NutritionRepository
 import org.myapp.mymeal.NutritionResponse
-import org.myapp.mymeal.Screen
+import org.myapp.mymeal.navigation.Screen
 import org.myapp.mymeal.view.HomeAndBuyMeal.calculateHealthMetrics
 import org.myapp.mymeal.components.BottomNavigationBar
 import org.myapp.mymeal.controller.FirestoreRepository

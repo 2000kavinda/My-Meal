@@ -3,9 +3,9 @@ package org.myapp.mymeal.controller
 import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
-import org.myapp.mymeal.Meal
-import org.myapp.mymeal.Order
-import org.myapp.mymeal.User
+import org.myapp.mymeal.model.Meal
+import org.myapp.mymeal.model.Order
+import org.myapp.mymeal.model.User
 import org.myapp.mymeal.model.Card
 import java.time.LocalDate
 

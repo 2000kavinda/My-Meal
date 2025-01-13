@@ -1,4 +1,6 @@
-package org.myapp.mymeal
+package org.myapp.mymeal.navigation
+
+import org.myapp.mymeal.model.Meal
 
 sealed class Screen {
     object SignInScreen : Screen()

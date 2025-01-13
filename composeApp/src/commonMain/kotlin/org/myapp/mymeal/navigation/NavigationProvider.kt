@@ -1,4 +1,4 @@
-package org.myapp.mymeal
+package org.myapp.mymeal.navigation
 
 object NavigationProvider {
     val navigationManager = NavigationManager()

@@ -10,7 +10,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.Alignment
@@ -19,9 +18,9 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
-import org.myapp.mymeal.NavigationProvider.navigationManager
-import org.myapp.mymeal.Screen
-import org.myapp.mymeal.analyzeImages
+import org.myapp.mymeal.navigation.NavigationProvider.navigationManager
+import org.myapp.mymeal.navigation.Screen
+import org.myapp.mymeal.controller.analyzeImages
 import java.awt.FileDialog
 import java.awt.Frame
 import javax.imageio.ImageIO

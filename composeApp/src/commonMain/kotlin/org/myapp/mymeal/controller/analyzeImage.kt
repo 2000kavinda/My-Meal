@@ -1,8 +1,6 @@
-package org.myapp.mymeal
+package org.myapp.mymeal.controller
 
 import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.graphics.toPixelMap
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.request.*
@@ -15,9 +13,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.doubleOrNull
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
-import java.awt.image.BufferedImage
-import java.io.ByteArrayOutputStream
-import javax.imageio.ImageIO
+import org.myapp.mymeal.toJpegByteArray
 
 suspend fun analyzeImages(imageBitmap: ImageBitmap?): String {
     if (imageBitmap == null) {

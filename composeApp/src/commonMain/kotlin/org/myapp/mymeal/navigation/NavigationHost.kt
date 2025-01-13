@@ -1,4 +1,4 @@
-package org.myapp.mymeal
+package org.myapp.mymeal.navigation
 
 import org.myapp.mymeal.controller.AuthService
 import GameScreen
@@ -8,6 +8,12 @@ import androidx.compose.runtime.getValue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.myapp.mymeal.ImagePickerUI
+import org.myapp.mymeal.PlatformImagePicker
+import org.myapp.mymeal.view.PlayGame.PlayScreen
+import org.myapp.mymeal.view.Profile.ProfileScreen
+import org.myapp.mymeal.SharedViewModel
+import org.myapp.mymeal.model.User
 import org.myapp.mymeal.controller.FirestoreRepository
 import org.myapp.mymeal.view.History.HistoryScreen
 import org.myapp.mymeal.view.HomeAndBuyMeal.MealDetailsScreen

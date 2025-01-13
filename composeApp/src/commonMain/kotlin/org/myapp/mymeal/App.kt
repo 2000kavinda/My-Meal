@@ -3,6 +3,8 @@ package org.myapp.mymeal
 import org.myapp.mymeal.controller.AuthService
 import androidx.compose.runtime.Composable
 import org.myapp.mymeal.controller.FirestoreRepository
+import org.myapp.mymeal.navigation.NavigationHost
+import org.myapp.mymeal.navigation.NavigationProvider
 
 @Composable
 fun App() {

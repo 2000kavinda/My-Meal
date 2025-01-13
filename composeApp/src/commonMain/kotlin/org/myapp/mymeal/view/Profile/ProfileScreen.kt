@@ -1,4 +1,4 @@
-package org.myapp.mymeal
+package org.myapp.mymeal.view.Profile
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -23,12 +23,18 @@ import androidx.compose.ui.unit.sp
 //import coil.compose.AsyncImage
 import io.ktor.client.*
 import kotlinx.coroutines.launch
-import org.myapp.mymeal.NavigationProvider.navigationManager
+import org.myapp.mymeal.NutritionRepository
+import org.myapp.mymeal.NutritionResponse
+import org.myapp.mymeal.navigation.Screen
+import org.myapp.mymeal.SharedViewModel
+import org.myapp.mymeal.navigation.NavigationProvider.navigationManager
 import org.myapp.mymeal.components.BottomNavigationBar
+import org.myapp.mymeal.components.NutriCard
+import org.myapp.mymeal.components.NutrientCard
 import org.myapp.mymeal.controller.FirestoreRepository
+import org.myapp.mymeal.currentPlatform
 import org.myapp.mymeal.model.HealthMetrics
-import org.myapp.mymeal.view.HomeAndBuyMeal.NutrientCard
-import org.myapp.mymeal.view.HomeAndBuyMeal.NutriCard
+import org.myapp.mymeal.model.Meal
 import org.myapp.mymeal.view.HomeAndBuyMeal.calculateHealthMetrics
 import org.myapp.mymeal.view.HomeAndBuyMeal.callOpenAIAPI
 
