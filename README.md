@@ -35,6 +35,6 @@ The **My Meal App** is designed to bridge this gap by providing a platform that 
 
 The **My Meal App** prioritizes:
 - **User Health**: By promoting healthier meal choices and tracking nutritional levels.
-- **User Experience**: With a seamless and intuitive platform.
+- **User Experience**: With a seamless and intuitive platform & rsponsive user interfaces.
 - **User Engagement**: Through gamification and reward systems to keep users motivated and involved.
 - **Business Sustainability**: By strategically adjusting the coin collection rate and coin economic value to maintain financial balance.
