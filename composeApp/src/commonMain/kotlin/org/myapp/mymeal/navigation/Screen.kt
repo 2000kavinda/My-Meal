@@ -4,8 +4,6 @@ import org.myapp.mymeal.model.Meal
 
 sealed class Screen {
     object SignInScreen : Screen()
-
-
     object SignUpScreen : Screen()
     object MealList : Screen()
     object History : Screen()

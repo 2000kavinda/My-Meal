@@ -12,9 +12,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-//import coil.compose.AsyncImage
 import coil3.compose.AsyncImage
 import org.myapp.mymeal.model.Meal
+import org.myapp.mymeal.ui.theme.ColorThemes
 
 @Composable
 fun MealImageAndDetails(meal: Meal) {
@@ -29,7 +29,7 @@ fun MealImageAndDetails(meal: Meal) {
     Spacer(modifier = Modifier.height(20.dp))
     Text(
         text = meal.name,
-        fontWeight = FontWeight.Bold, // Bold text
+        fontWeight = FontWeight.Bold,
         fontSize = 27.sp,
 
         )
@@ -37,33 +37,31 @@ fun MealImageAndDetails(meal: Meal) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp), // Add vertical spacing
-        horizontalArrangement = Arrangement.SpaceBetween, // Position elements at opposite corners
-        verticalAlignment = Alignment.CenterVertically // Align elements vertically to the center
+            .padding(vertical = 8.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        // "Price" Text
         Text(
             text = "$${meal.price}",
             fontWeight = FontWeight.Bold,
             fontSize = 18.sp,
-            color = Color(0xFF000000) // Black for "Price"
+            color = ColorThemes.PrimaryBlackColor
         )
 
-        // Box for "Type"
         Box(
             modifier = Modifier
-                .clip(RoundedCornerShape(20.dp)) // Apply rounded corners first
+                .clip(RoundedCornerShape(20.dp))
                 .background(
-                    color = if (meal.type.equals("Non-Veg", ignoreCase = true)) Color(0xFFFF0000) // Light Red
-                    else Color(0xFF008000) // Light Green
+                    color = if (meal.type.equals("Non-Veg", ignoreCase = true)) ColorThemes.PrimaryRedColor
+                    else ColorThemes.PrimaryGreenColor
                 )
-                .padding(horizontal = 8.dp, vertical = 4.dp) // Inner padding
+                .padding(horizontal = 8.dp, vertical = 4.dp)
         ) {
             Text(
                 text = meal.type,
                 fontWeight = FontWeight.Bold,
                 fontSize = 14.sp,
-                color = Color.White // Text color for contrast
+                color = Color.White
             )
         }
     }

@@ -1,5 +1,6 @@
 package org.myapp.mymeal.view.buyMeal
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -13,14 +14,15 @@ import org.myapp.mymeal.navigation.NavigationProvider.navigationManager
 import org.myapp.mymeal.navigation.Screen
 import org.myapp.mymeal.components.BottomNavigationBar
 import org.myapp.mymeal.components.MealCard
-import org.myapp.mymeal.controller.FirestoreRepository
+import org.myapp.mymeal.controller.BuyMealController
+import org.myapp.mymeal.controller.HistoryController
 import org.myapp.mymeal.ui.theme.ColorThemes
 
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun MealListScreen(
-    repository: FirestoreRepository,
+    repository: HistoryController,
     onMealClick: (Meal) -> Unit,
 ) {
     var meals by remember { mutableStateOf<List<Meal>>(emptyList()) }
@@ -29,8 +31,8 @@ fun MealListScreen(
     var isLoading by remember { mutableStateOf(true) }
     var errorMessage by remember { mutableStateOf("") }
 
-    // State for Bottom Navigation Bar
     val selectedItem = remember { mutableStateOf(0) }
+    var buyMealController= BuyMealController()
 
     var meal = Meal(
         name = "Default Meal",
@@ -43,7 +45,7 @@ fun MealListScreen(
     LaunchedEffect(Unit) {
         try {
             isLoading = true
-            meals = repository.getMeals()
+            meals = buyMealController.getMeals()
             filteredMeals = meals
             errorMessage = if (meals.isEmpty()) "No meals found" else ""
         } catch (e: Exception) {
@@ -57,12 +59,12 @@ fun MealListScreen(
 
     Box(
         modifier = Modifier.fillMaxSize()
+            .background(ColorThemes.PrimaryTextColor)
     ) {
-        // Main content scrollable
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(scrollState) // Enable scrolling
+                .verticalScroll(scrollState)
                 .padding(16.dp),
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
@@ -79,7 +81,7 @@ fun MealListScreen(
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 16.dp), // Added padding here
+                    .padding(horizontal = 16.dp, vertical = 16.dp),
                 placeholder = { Text(text = "Search meals...") },
                 singleLine = true
             )
@@ -101,7 +103,6 @@ fun MealListScreen(
             }
         }
 
-        // Bottom Navigation Bar positioned at the bottom
         Column(
             modifier = Modifier
                 .align(Alignment.BottomCenter)

@@ -33,15 +33,15 @@ fun CustomDropdown(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .border(1.dp, Color.Gray, RoundedCornerShape(12.dp)) // Add border with rounded corners
+                .border(1.dp, Color.Gray, RoundedCornerShape(12.dp))
                 .background(
                     color = Color.White,
-                    shape = RoundedCornerShape(12.dp) // Match the border shape
+                    shape = RoundedCornerShape(12.dp)
                 )
         ) {
             TextField(
                 value = selectedOption,
-                onValueChange = { /* Do nothing, read-only */ },
+                onValueChange = {  },
                 label = { Text(label) },
                 enabled = !isLoading,
                 readOnly = true,
@@ -55,10 +55,10 @@ fun CustomDropdown(
                     )
                 },
                 colors = TextFieldDefaults.textFieldColors(
-                    backgroundColor = Color.Transparent, // Transparent to avoid overlapping
-                    focusedIndicatorColor = Color.Transparent, // Remove focused underline
-                    unfocusedIndicatorColor = Color.Transparent, // Remove unfocused underline
-                    disabledIndicatorColor = Color.Transparent // Remove disabled underline
+                    backgroundColor = Color.Transparent,
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    disabledIndicatorColor = Color.Transparent
                 )
             )
         }

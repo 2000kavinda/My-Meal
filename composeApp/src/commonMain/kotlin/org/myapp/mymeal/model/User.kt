@@ -1,7 +1,5 @@
 package org.myapp.mymeal.model
 
-
-
 data class User(
     val email: String = "",
     val password: String = "",

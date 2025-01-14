@@ -18,14 +18,15 @@ import org.myapp.mymeal.navigation.NavigationProvider.navigationManager
 import org.myapp.mymeal.components.BottomNavigationBar
 import org.myapp.mymeal.components.NutriCard
 import org.myapp.mymeal.components.NutrientCard
-import org.myapp.mymeal.controller.FirestoreRepository
+import org.myapp.mymeal.controller.BuyMealController
+import org.myapp.mymeal.controller.HistoryController
+import org.myapp.mymeal.controller.GameController
 import org.myapp.mymeal.currentPlatform
 import org.myapp.mymeal.model.HealthMetrics
 import org.myapp.mymeal.model.Meal
 import org.myapp.mymeal.ui.theme.ColorThemes
 import org.myapp.mymeal.ui.theme.FontSizes
 import org.myapp.mymeal.view.buyMeal.calculateHealthMetrics
-import org.myapp.mymeal.view.buyMeal.callOpenAIAPI
 
 @Composable
 fun ProfileScreen(
@@ -33,7 +34,7 @@ fun ProfileScreen(
     sharedViewModel: SharedViewModel,
 ) {
 
-    val firestoreRepository = remember { FirestoreRepository() }
+    val firestoreRepository = remember { HistoryController() }
     val httpClient = remember { HttpClient() }
     val nutritionData by remember { mutableStateOf<NutritionResponse?>(null) }
     var healthMetrics by remember { mutableStateOf<HealthMetrics?>(null) }
@@ -48,15 +49,17 @@ fun ProfileScreen(
     val currentUserGender by sharedViewModel.currentUserGender.collectAsState()
     val currentUserGoal by sharedViewModel.currentUserGoal.collectAsState()
     val currentUserActivityLevel by sharedViewModel.currentUserActivityLevel.collectAsState()
+    val buyMealController = BuyMealController()
+    val gameController= GameController()
 
     LaunchedEffect(Unit) {
         coroutineScope.launch {
             try {
                 isLoading = true
 
-                val meals = firestoreRepository.fetchNutritionData(currentUserEmail?:"")
-                coins = firestoreRepository.fetchCoinCount(currentUserEmail?:"")!!
-                val dayCount = firestoreRepository.fetchUniqueDateCountExcludingToday(currentUserEmail?:"")
+                val meals = buyMealController.fetchNutritionData(currentUserEmail?:"")
+                coins = gameController.fetchCoinCount(currentUserEmail?:"")!!
+                val dayCount = buyMealController.fetchUniqueDateCountExcludingToday(currentUserEmail?:"")
                 healthMetrics = calculateHealthMetrics(
                     meals,
                     nutritionData,
@@ -77,7 +80,7 @@ fun ProfileScreen(
         if (healthMetrics != null && healthMetrics!!.healthStatus.isNotEmpty()) {
             isApiLoading = true
             coroutineScope.launch {
-                apiResponse = callOpenAIAPI(httpClient, healthMetrics!!.healthStatus)
+                //apiResponse = callOpenAIAPI(httpClient, healthMetrics!!.healthStatus)
                 isApiLoading = false
             }
         }

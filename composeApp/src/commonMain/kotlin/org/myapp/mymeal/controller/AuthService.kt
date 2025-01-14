@@ -3,7 +3,7 @@ package org.myapp.mymeal.controller
 import org.myapp.mymeal.state.SharedViewModel
 import java.security.MessageDigest
 
-class AuthService(private val repository: FirestoreRepository, private val sharedViewModel: SharedViewModel) {
+class AuthService(private val repository: HistoryController, private val sharedViewModel: SharedViewModel) {
 
     private fun encryptPassword(password: String): String {
         val messageDigest = MessageDigest.getInstance("SHA-256")
@@ -12,7 +12,8 @@ class AuthService(private val repository: FirestoreRepository, private val share
     }
 
     suspend fun signIn(email: String, password: String): Boolean {
-        val user = repository.getUserByEmail(email)
+        val authController=AuthController();
+        val user = authController.getUserByEmail(email)
         val hashedInputPassword = encryptPassword(password)
         if (user != null) {
             sharedViewModel.setCurrentUserGoal(user.goal)

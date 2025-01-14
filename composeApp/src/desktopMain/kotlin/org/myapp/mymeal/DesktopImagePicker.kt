@@ -21,6 +21,7 @@ import kotlinx.coroutines.launch
 import org.myapp.mymeal.navigation.NavigationProvider.navigationManager
 import org.myapp.mymeal.navigation.Screen
 import org.myapp.mymeal.controller.analyzeImages
+import org.myapp.mymeal.ui.theme.ColorThemes
 import java.awt.FileDialog
 import java.awt.Frame
 import javax.imageio.ImageIO
@@ -30,22 +31,21 @@ fun InitialScreen(
     onPickImage: () -> Unit,
     onSkip: () -> Unit
 ) {
-    val logoPainter: Painter = painterResource("logo.png") // Replace with your logo resource
+    val logoPainter: Painter = painterResource("logo.png")
 
-    // Screen with full background color
+
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFCBD5ED)), // Correct orange background color
+            .background(ColorThemes.PrimaryBgColor),
         contentAlignment = Alignment.Center
     ) {
-        // Centered rounded rectangle
         Box(
             modifier = Modifier
-                .fillMaxWidth(0.85f) // White box width (85% of screen width)
-                .fillMaxHeight(0.75f) // White box height (75% of screen height)
-                .background(Color.White, shape = RoundedCornerShape(24.dp)) // White rounded rectangle
-                .padding(16.dp), // Inner padding inside the rectangle
+                .fillMaxWidth(0.85f)
+                .fillMaxHeight(0.75f)
+                .background(Color.White, shape = RoundedCornerShape(24.dp))
+                .padding(16.dp),
             contentAlignment = Alignment.TopCenter
         ) {
             Column(
@@ -53,109 +53,73 @@ fun InitialScreen(
                 verticalArrangement = Arrangement.Center,
                 modifier = Modifier.fillMaxSize()
             ) {
-                // Logo
                 Image(
                     painter = logoPainter,
                     contentDescription = "Logo",
-                    modifier = Modifier.size(200.dp) // Adjust logo size
+                    modifier = Modifier.size(200.dp)
                 )
-                //Spacer(modifier = Modifier.height(32.dp))
 
-
-                Spacer(modifier = Modifier.height(35.dp)) // Add spacing between image and button
-
-                // Styled Button with Icon and Text
+                Spacer(modifier = Modifier.height(35.dp))
                 Button(
                     onClick = onPickImage,
                     modifier = Modifier
-                        .fillMaxWidth(0.5f) // Set button width
-                        .height(70.dp) // Set button height
-                        .padding(8.dp), // Add padding around the button
+                        .fillMaxWidth(0.5f)
+                        .height(70.dp)
+                        .padding(8.dp),
                     colors = ButtonDefaults.buttonColors(
-                        backgroundColor = Color(0xFF002945) // Set button background color (HEX: #FF0000 - Red)
+                        backgroundColor = ColorThemes.PrimaryButtonColor
                     ),
                     shape = MaterialTheme.shapes.medium.copy(
-                        CornerSize(12.dp) // Set border radius to 20.dp
+                        CornerSize(12.dp)
                     ),
-                    //border = BorderStroke(2.dp, Color.Blue) // Set border with color blue
+
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(16.dp) // Space between icon and text
+                        horizontalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         Icon(
-                            painter = painterResource("ic_gallery.png"), // Replace with your gallery icon resource
+                            painter = painterResource("ic_gallery.png"),
                             contentDescription = "Gallery Icon",
-                            tint = Color.White, // Set the icon color
-                            modifier = Modifier.size(30.dp) // Set the icon size
+                            tint = Color.White,
+                            modifier = Modifier.size(30.dp)
                         )
                         Text(
                             "Insert External Nutrition",
-                            color = Color.White, // Set text color
-                            //fontWeight = FontWeight.Bold, // Bold the text
-                            fontSize = 18.sp // Adjust text size
+                            color = Color.White,
+                            fontSize = 18.sp
                         )
                     }
                 }
-                //Spacer(modifier = Modifier.height(5.dp)) // Add spacing between image and button
-
 
                 Button(
                     onClick={
                         navigationManager.navigateTo(Screen.MealList)
                     },
                     modifier = Modifier
-                        .fillMaxWidth(0.5f) // Set button width
-                        .height(70.dp) // Set button height
-                        .padding(8.dp), // Add padding around the button
+                        .fillMaxWidth(0.5f)
+                        .height(70.dp)
+                        .padding(8.dp),
                     colors = ButtonDefaults.buttonColors(
-                        backgroundColor = Color(0xFFFFFFFF) // Set button background color (HEX: #FF0000 - Red)
+                        backgroundColor = ColorThemes.PrimaryWhiteColor
                     ),
                     shape = MaterialTheme.shapes.medium.copy(
-                        CornerSize(12.dp) // Set border radius to 20.dp
+                        CornerSize(12.dp)
                     ),
-                    border = BorderStroke(2.dp, Color(0xFF002945)) // Set border with color blue
+                    border = BorderStroke(2.dp, ColorThemes.PrimaryButtonColor)
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(16.dp) // Space between icon and text
+                        horizontalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        /*Icon(
-                            painter = painterResource(id = R.drawable.ic_gallery), // Replace with your gallery icon resource
-                            contentDescription = "Gallery Icon",
-                            tint = Color(0xFFCB823D), // Set the icon color
-                            modifier = Modifier.size(30.dp) // Set the icon size
-                        )*/
+
                         Text(
                             "Skip for Now",
-                            color = Color(0xFF002945), // Set text color
-                            //fontWeight = FontWeight.Bold, // Bold the text
-                            fontSize = 18.sp // Adjust text size
+                            color = ColorThemes.PrimaryButtonColor,
+                            fontSize = 18.sp
                         )
                     }
                 }
-                // "Insert" Button
-                /*Button(
-                    onClick = onPickImage,
-                    colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFCD7F32)),
-                    modifier = Modifier
-                        .fillMaxWidth(0.6f)
-                        .height(50.dp)
-                ) {
-                    Text("Insert", fontSize = 16.sp, color = Color.White)
-                }
-                Spacer(modifier = Modifier.height(16.dp))
-
-                // "Skip" Button
-                Button(
-                    onClick = onSkip,
-                    colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFCD7F32)),
-                    modifier = Modifier
-                        .fillMaxWidth(0.6f)
-                        .height(50.dp)
-                ) {
-                    Text("Skip", fontSize = 16.sp, color = Color.White)
-                }*/
             }
         }
     }
@@ -167,15 +131,15 @@ fun ImagePickerUI(
     onBack: () -> Unit,
     analysisResult: String?,
     isLoading: Boolean
-) {val topAppBarColor = Color(0xFF002945)  // Example hex color for the app bar (Purple)
-    val backgroundColor = Color(0xFFFFFFFF)
+) {val topAppBarColor = ColorThemes.PrimaryButtonColor
+    val backgroundColor = ColorThemes.PrimaryWhiteColor
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
                     Text(
                         "Nutrition Report",
-                        color = backgroundColor, // Set text color here directly
+                        color = backgroundColor,
                     ) },
                 backgroundColor = topAppBarColor,
                 navigationIcon = {
@@ -192,7 +156,7 @@ fun ImagePickerUI(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            // Left Column: Half-screen image display
+
             Box(
                 modifier = Modifier
                     .fillMaxHeight()
@@ -210,7 +174,7 @@ fun ImagePickerUI(
                 } ?: Text("No Image Selected", color = Color.Gray)
             }
 
-            // Right Column: Controls and Results
+
             Column(
                 modifier = Modifier
                     .fillMaxHeight()
@@ -222,7 +186,7 @@ fun ImagePickerUI(
                 if (isLoading) {
                     CircularProgressIndicator(modifier = Modifier.padding(16.dp),color = Color(0xFF002945))
                 } else {
-                    // Card for Nutritional Information
+
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -253,10 +217,9 @@ fun ImagePickerUI(
                                         )
                                     }
 
-                                    // Add a faded Divider between rows, except after the last item
                                     if (index < analysisData.size - 1) {
                                         Divider(
-                                            color = Color.Gray.copy(alpha = 0.3f), // Faded line with reduced opacity
+                                            color = Color.Gray.copy(alpha = 0.3f),
                                             thickness = 1.dp,
                                             modifier = Modifier.padding(horizontal = 4.dp)
                                         )
@@ -279,21 +242,20 @@ fun ImagePickerUI(
                             navigationManager.navigateTo(Screen.MealList)
                         },
                         modifier = Modifier
-                            .fillMaxWidth() // Ensure the button fills the available width
+                            .fillMaxWidth()
                             .height(70.dp)
                             .padding(8.dp),
                         colors = ButtonDefaults.buttonColors(
-                            backgroundColor = Color(0xFF002945) // Set button background color (HEX: #FF0000 - Red)
+                            backgroundColor = ColorThemes.PrimaryButtonColor
                         ),
                         shape = MaterialTheme.shapes.medium.copy(
-                            CornerSize(10.dp) // Set border radius to 20.dp
+                            CornerSize(10.dp)
                         ),
                     ) {
                         Text(
                             "Home",
-                            color = Color.White, // Set text color
-                            //fontWeight = FontWeight.Bold, // Bold the text
-                            fontSize = 18.sp // Adjust text size
+                            color = Color.White,
+                            fontSize = 18.sp
                         )
                     }
                 }
@@ -324,7 +286,7 @@ fun DesktopImagePicker() {
     var isLoading by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
 
-    // Function to pick an image and start the analysis automatically
+
     fun pickImage() {
         val fileDialog = FileDialog(Frame(), "Select Image", FileDialog.LOAD)
         fileDialog.isVisible = true
@@ -333,29 +295,28 @@ fun DesktopImagePicker() {
         file?.let {
             val bufferedImage = ImageIO.read(it)
             selectedImage = bufferedImage.toComposeImageBitmap()
-            showInitialScreen = false // Move to the main screen after picking
-            isLoading = true // Show loading indicator
+            showInitialScreen = false
+            isLoading = true
 
-            // Automatically start analyzing the image
             coroutineScope.launch {
                 analysisResult = try {
-                    analyzeImages(selectedImage) // Run analysis automatically
+                    analyzeImages(selectedImage)
                 } catch (e: Exception) {
                     "Error: ${e.localizedMessage}"
                 }
-                isLoading = false // Hide loading indicator after analysis is complete
+                isLoading = false
             }
         }
     }
 
     if (showInitialScreen) {
-        // Initial screen with Pick Image and Skip
+
         InitialScreen(
             onPickImage = { pickImage() },
             onSkip = { showInitialScreen = false }
         )
     } else {
-        // Main Image Picker UI
+
         ImagePickerUI(
             imageBitmap = selectedImage,
             onBack = {

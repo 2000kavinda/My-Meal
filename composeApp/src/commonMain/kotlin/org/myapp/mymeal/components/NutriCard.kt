@@ -14,7 +14,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-//import coil.compose.AsyncImage
 
 @Composable
 fun NutriCard(value: Int, color: Color) {
@@ -32,8 +31,8 @@ fun NutriCard(value: Int, color: Color) {
                 .size(100.dp)
                 .clip(CircleShape)
                 .border(
-                    width = 4.dp, // Border thickness
-                    color = color, // Border color
+                    width = 4.dp,
+                    color = color,
                     shape = CircleShape
                 )
                 .background(Color.White)

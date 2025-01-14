@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.myapp.mymeal.navigation.NavigationProvider.navigationManager
 import org.myapp.mymeal.navigation.Screen
+import org.myapp.mymeal.ui.theme.ColorThemes
 
 
 @Composable
@@ -28,9 +29,8 @@ fun BottomNavigationBar(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp),
-            //.align(Alignment.BottomCenter), // Anchors the bar at the bottom
-        backgroundColor = Color(0xFF002945),
-        elevation = 8.dp // Add elevation for better visibility
+            backgroundColor =ColorThemes.PrimaryButtonColor,
+        elevation = 8.dp
     ) {
         BottomNavigationItem(
             icon = {

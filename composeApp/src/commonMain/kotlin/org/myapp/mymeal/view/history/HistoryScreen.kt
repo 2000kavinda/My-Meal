@@ -1,5 +1,6 @@
 package org.myapp.mymeal.view.history
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -13,7 +14,7 @@ import org.myapp.mymeal.navigation.NavigationProvider.navigationManager
 import org.myapp.mymeal.navigation.Screen
 import org.myapp.mymeal.components.BottomNavigationBar
 import org.myapp.mymeal.components.HistoryCard
-import org.myapp.mymeal.controller.FirestoreRepository
+import org.myapp.mymeal.controller.HistoryController
 import org.myapp.mymeal.state.SharedViewModel
 import org.myapp.mymeal.ui.theme.ColorThemes
 
@@ -21,7 +22,7 @@ import org.myapp.mymeal.ui.theme.ColorThemes
 @Composable
 fun HistoryScreen(
     sharedViewModel: SharedViewModel,
-    repository: FirestoreRepository,
+    repository: HistoryController,
     onMealClick: (Meal) -> Unit,
 ) {
     var meals by remember { mutableStateOf<List<Meal>>(emptyList()) }
@@ -55,6 +56,7 @@ fun HistoryScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
+            .background(ColorThemes.PrimaryTextColor)
     ) {
         Column(
             modifier = Modifier

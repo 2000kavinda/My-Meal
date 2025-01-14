@@ -12,7 +12,7 @@ class NutritionRepository {
     private val client = HttpClient {
         install(ContentNegotiation) {
             json(Json {
-                ignoreUnknownKeys = true // Ignore extra fields in the response
+                ignoreUnknownKeys = true
             })
         }
     }

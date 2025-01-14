@@ -1,4 +1,5 @@
 package org.myapp.mymeal.view.playGame
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -10,40 +11,34 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
-import io.ktor.client.HttpClient
-import org.myapp.mymeal.controller.NutritionRepository
 import org.myapp.mymeal.controller.NutritionResponse
 import org.myapp.mymeal.navigation.Screen
 import org.myapp.mymeal.navigation.NavigationProvider.navigationManager
 import org.myapp.mymeal.components.BottomNavigationBar
-import org.myapp.mymeal.controller.FirestoreRepository
+import org.myapp.mymeal.controller.BuyMealController
+import org.myapp.mymeal.controller.HistoryController
+import org.myapp.mymeal.controller.GameController
 import org.myapp.mymeal.model.HealthMetrics
 import org.myapp.mymeal.model.Meal
 import org.myapp.mymeal.state.SharedViewModel
 import org.myapp.mymeal.ui.theme.ColorThemes
+import org.myapp.mymeal.utils.Constants
 import org.myapp.mymeal.view.buyMeal.calculateHealthMetrics
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun PlayScreen(
-    repository: FirestoreRepository,
+    repository: HistoryController,
     onMealClick: (Meal) -> Unit,
     sharedViewModel: SharedViewModel,
 ) {
-    val nutritionRepository = remember { NutritionRepository() }
-    val firestoreRepository = remember { FirestoreRepository() }
-    val httpClient = remember { HttpClient() }
+    val firestoreRepository = remember { HistoryController() }
     var showPopup by remember { mutableStateOf(false) }
-
-    var meals by remember { mutableStateOf<List<Meal>>(emptyList()) }
-    var filteredMeals by remember { mutableStateOf<List<Meal>>(emptyList()) }
-    var searchQuery by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(true) }
     var errorMessage by remember { mutableStateOf("") }
     var nutritionData by remember { mutableStateOf<NutritionResponse?>(null) }
     var healthMetrics by remember { mutableStateOf<HealthMetrics?>(null) }
     var coins by remember { mutableStateOf(0.0) }
-    var aiRecommendations by remember { mutableStateOf("") }
     val currentUserEmail by sharedViewModel.currentUserEmail.collectAsState()
     val currentUserGender by sharedViewModel.currentUserGender.collectAsState()
     val currentUserGoal by sharedViewModel.currentUserGoal.collectAsState()
@@ -51,19 +46,21 @@ fun PlayScreen(
     val selectedItem = remember { mutableStateOf(0) }
     var meal = Meal(
         name = "Default Meal",
-        photo = "https://example.com/default-photo.jpg",
+        photo = "",
         price = 0.0,
         description = "Default description",
         type = "Default type"
     )
+    val buyMealController = BuyMealController()
+    val gameController= GameController()
 
     LaunchedEffect(Unit) {
         try {
             isLoading = true
 
-            val meals = firestoreRepository.fetchNutritionData(currentUserEmail?:"")
-            coins = firestoreRepository.fetchCoinCount(currentUserEmail?:"")!!
-            val dayCount = firestoreRepository.fetchUniqueDateCountExcludingToday(currentUserEmail?:"")
+            val meals = buyMealController.fetchNutritionData(currentUserEmail?:"")
+            coins = gameController.fetchCoinCount(currentUserEmail?:"")!!
+            val dayCount = buyMealController.fetchUniqueDateCountExcludingToday(currentUserEmail?:"")
             healthMetrics = calculateHealthMetrics(
                 meals,
                 nutritionData,
@@ -83,8 +80,9 @@ fun PlayScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
+            .background(ColorThemes.PrimaryTextColor)
     ) {
-        // Main Content Scrollable
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -92,21 +90,19 @@ fun PlayScreen(
                 .padding(end = 16.dp,
                     start = 16.dp,
                     top = 16.dp,
-                    bottom = 56.dp), // Reserve space for the bottom bar
+                    bottom = 56.dp),
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             AsyncImage(
-                model = "https://firebasestorage.googleapis.com/v0/b/care-cost.appspot.com/o/meal%20photos%2FUntitled_design__1_-removebg.png?alt=media&token=0dacbe0d-7fa8-407a-86ab-020832fb83b8",
+                model = Constants.logoUrl,
                 contentDescription = "Meal Image",
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(400.dp)
             )
-            //Spacer(modifier = Modifier.height(32.dp))
 
-
-            Spacer(modifier = Modifier.height(35.dp)) // Add spacing between image and button
+            Spacer(modifier = Modifier.height(35.dp))
 
             Button(
                 onClick = {
@@ -128,8 +124,7 @@ fun PlayScreen(
 
         }
 
-        // Bottom Navigation Bar
-        Column(
+       Column(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 ) {
@@ -155,24 +150,6 @@ fun PlayScreen(
         )
     }
 }
-
-
-    // AI Recommendations Popup Dialog
-    /*if (showAIPopup) {
-        AlertDialog(
-            onDismissRequest = { showAIPopup = false },
-            title = { Text("AI Recommendations") },
-            text = { Text(aiRecommendations) },
-            confirmButton = {
-                TextButton(
-                    onClick = { showAIPopup = false }
-                ) {
-                    Text("Dismiss")
-                }
-            }
-        )
-    }*/
-
 
 
 

@@ -60,7 +60,7 @@ fun MealOtherDetails(
                 )
 
                 Text(
-                    text = coins?.toString() ?: "0",
+                    text = (coins?.toInt() ?: 0).toString(),
                     fontWeight = FontWeight.Bold,
                     fontSize = FontSizes.font22,
                     color = ColorThemes.PrimaryBlackColor,

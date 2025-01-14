@@ -6,7 +6,6 @@ import io.ktor.client.plugins.logging.Logging
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
-// This function now expects an HttpClientEngine (like CIO) and returns a configured HttpClient
 fun createHttpClient(engine: CIO = CIO): HttpClient {
     return HttpClient(engine) {
         install(Logging) {

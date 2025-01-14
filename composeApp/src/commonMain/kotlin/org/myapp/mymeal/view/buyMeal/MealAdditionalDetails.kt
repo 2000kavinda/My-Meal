@@ -4,13 +4,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-//import coil.compose.AsyncImage
 import org.myapp.mymeal.model.Meal
 import org.myapp.mymeal.controller.NutritionResponse
 import org.myapp.mymeal.state.SharedViewModel
@@ -68,16 +66,8 @@ fun MealAdditionalDetails(
             Text("Pay $"+meal.price, color = Color.White, fontWeight = FontWeight.Bold)
         }
         Spacer(modifier = Modifier.height(16.dp))
-        /*Button(
-            onClick = {
-                sharedViewModel.setPayAmount(meal.price)
-                onShowCardDetails() },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-
-        }*/
         Button(
-            onClick = {sharedViewModel.setPayAmount(meal.price - (coins ?: 0.0)) // This should be a separate statement
+            onClick = {sharedViewModel.setPayAmount(meal.price - (coins ?: 0.0))
                 if(coins!=null){
                     if(coins <= meal.price){
                         sharedViewModel.setCoinAmount(coins)
@@ -89,7 +79,7 @@ fun MealAdditionalDetails(
                 else{
                     sharedViewModel.setCoinAmount(0.0)
                 }
-                onShowCardDetails() // Call the function
+                onShowCardDetails()
 
             },
             modifier = Modifier
@@ -100,7 +90,7 @@ fun MealAdditionalDetails(
         ) {
             Text(
                 text = if (coins != null && coins <= meal.price) {
-                    "Pay $" + (meal.price - coins).toString() + " + $coins Coins"
+                    "Pay $" + (meal.price - coins).toInt().toString() + " + ${coins.toInt()} Coins"
                 } else {
                     "Pay $" + (0.0 ).toString() + " + ${meal.price} Coins"
                 },
@@ -108,20 +98,9 @@ fun MealAdditionalDetails(
                 fontWeight = FontWeight.Bold
             )
 
-            //Text("Pay $"+meal.price, color = Color.White)
+
         }
 
-        /*Button(
-            onClick = {
-                sharedViewModel.setPayAmount(meal.price - (coins ?: 0.0)) // This should be a separate statement
-                onShowCardDetails() // Call the function
-            },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(
-                text = "Pay $" + (meal.price - (coins ?: 0.0)).toString() + " + $coins Coins"
-            )
-        }*/
 
     }
 

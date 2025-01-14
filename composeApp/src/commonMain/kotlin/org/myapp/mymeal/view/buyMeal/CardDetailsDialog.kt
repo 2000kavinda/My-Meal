@@ -7,7 +7,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-//import coil.compose.AsyncImage
 import kotlinx.coroutines.launch
 import org.myapp.mymeal.model.Meal
 import org.myapp.mymeal.navigation.NavigationProvider.navigationManager
@@ -16,7 +15,9 @@ import org.myapp.mymeal.model.Order
 import org.myapp.mymeal.navigation.Screen
 import org.myapp.mymeal.state.SharedViewModel
 import org.myapp.mymeal.components.CustomOutlinedTextField
-import org.myapp.mymeal.controller.FirestoreRepository
+import org.myapp.mymeal.controller.BuyMealController
+import org.myapp.mymeal.controller.HistoryController
+import org.myapp.mymeal.controller.GameController
 import org.myapp.mymeal.ui.theme.ColorThemes
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -35,12 +36,11 @@ fun CardDetailsDialog(
     var expiryDate by remember { mutableStateOf("") }
     var cvv by remember { mutableStateOf("") }
     var paymentStatus by remember { mutableStateOf("") }
-    val firestoreRepository = remember { FirestoreRepository() }
+    val firestoreRepository = remember { HistoryController() }
     val coroutineScope = rememberCoroutineScope()
 
     val currentDate = SimpleDateFormat("MM/yy", Locale.getDefault()).format(Date())
 
-    // Extract nutrition details from NutritionResponse
     val nutritionItem = nutritionData?.items?.firstOrNull()
     val calories = nutritionItem?.calories ?: 0.0
     val carbohydrates = nutritionItem?.carbohydrates_total_g ?: 0.0
@@ -49,7 +49,8 @@ fun CardDetailsDialog(
     val payAmount by sharedViewModel.payAmount.collectAsState()
     val deductCoin by sharedViewModel.coinAmount.collectAsState()
     val currentUserEmail by sharedViewModel.currentUserEmail.collectAsState()
-
+    val buyMealController =BuyMealController()
+    val gameController=GameController()
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text("Enter Card Details",fontWeight = FontWeight.Bold ) },
@@ -88,22 +89,23 @@ fun CardDetailsDialog(
         confirmButton = {
             Button(onClick = {
                 coroutineScope.launch {
-                    val cardDetails = firestoreRepository.fetchCardDetails(cardNumber)
+
+                    val cardDetails = buyMealController.fetchCardDetails(cardNumber)
                     if (cardDetails != null) {
-                        // Validate card details and process payment
+
                         if (cardDetails.card == cardNumber && cardDetails.cvv == cvv) {
                             val expiry = SimpleDateFormat("MM/yy", Locale.getDefault()).parse(expiryDate)
                             val current = SimpleDateFormat("MM/yy", Locale.getDefault()).parse(currentDate)
                             if (expiry != null && expiry >= current) {
                                 if (cardDetails.balance >= meal.price) {
                                     val newBalance = cardDetails.balance - payAmount!!
-                                    val paymentSuccessful = firestoreRepository.deductBalance(cardNumber, newBalance)
+                                    val paymentSuccessful = buyMealController.deductBalance(cardNumber, newBalance)
                                     if (paymentSuccessful) {
                                         paymentStatus = "Payment Successful"
                                         sharedViewModel.setCoinAmount(meal.price)
-                                        firestoreRepository.reduceCoinAmountByEmail(currentUserEmail?:"",deductCoin?:0.0)
-                                        // Save the order details to Firestore
-                                        firestoreRepository.saveOrder(
+                                        gameController.reduceCoinAmountByEmail(currentUserEmail?:"",deductCoin?:0.0)
+
+                                        buyMealController.saveOrder(
                                             Order(
                                                 name = meal.name,
                                                 calories = calories,
@@ -135,8 +137,8 @@ fun CardDetailsDialog(
                     }
                 }
             },colors = ButtonDefaults.buttonColors(
-                backgroundColor = ColorThemes.PrimaryButtonColor, // Replace with your desired color
-                contentColor = Color.White // Text color
+                backgroundColor = ColorThemes.PrimaryButtonColor,
+                contentColor = Color.White
             )) {
                 Text("Submit")
             }
@@ -145,8 +147,8 @@ fun CardDetailsDialog(
             Button(
                 onClick = onDismiss,
                 colors = ButtonDefaults.buttonColors(
-                    backgroundColor = ColorThemes.PrimaryButtonColor, // Replace with your desired color
-                    contentColor = Color.White // Text color
+                    backgroundColor = ColorThemes.PrimaryButtonColor,
+                    contentColor = Color.White
                 )
             ) {
                 Text("Cancel")

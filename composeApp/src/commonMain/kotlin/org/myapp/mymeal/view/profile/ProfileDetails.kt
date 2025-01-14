@@ -90,7 +90,7 @@ fun ProfileDetails(meal: Meal, sharedViewModel: SharedViewModel) {
         Spacer(modifier = Modifier.width(16.dp))
 
         Text(
-            text = currentUserGender ?: "No gender available",
+            text = "Gender - ${currentUserGender ?: " No gender available "}",
             fontSize = FontSizes.font24
         )
     }
@@ -111,7 +111,7 @@ fun ProfileDetails(meal: Meal, sharedViewModel: SharedViewModel) {
         Spacer(modifier = Modifier.width(16.dp))
 
         Text(
-            text = currentUserGoal ?: "No goal available",
+            text = "Goal - ${currentUserGoal ?: " No goal available "}",
             fontSize = FontSizes.font24
         )
     }
@@ -132,7 +132,7 @@ fun ProfileDetails(meal: Meal, sharedViewModel: SharedViewModel) {
         Spacer(modifier = Modifier.width(16.dp))
 
         Text(
-            text = currentUserActivityLevel ?: "No activity level available",
+            text = "Activity Level - ${currentUserActivityLevel ?: " No activity level available"}",
             fontSize = FontSizes.font24
         )
     }
@@ -151,12 +151,11 @@ fun ProfileDetails(meal: Meal, sharedViewModel: SharedViewModel) {
         )
     }
 
-    // Show the logout confirmation dialog
     if (showLogoutDialog) {
         LogoutConfirmationDialog(
             onConfirm = {
                 showLogoutDialog = false
-                // Add logout logic here
+
             },
             onDismiss = {
                 showLogoutDialog = false
@@ -180,7 +179,6 @@ fun LogoutConfirmationDialog(onConfirm: () -> Unit, onDismiss: () -> Unit) {
             )
         },
         text = {
-            // Centering the text content within the dialog
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -195,7 +193,6 @@ fun LogoutConfirmationDialog(onConfirm: () -> Unit, onDismiss: () -> Unit) {
             }
         },
         buttons = {
-            // Centering the buttons below the text
             Box(
                 modifier = Modifier
                     .fillMaxWidth()

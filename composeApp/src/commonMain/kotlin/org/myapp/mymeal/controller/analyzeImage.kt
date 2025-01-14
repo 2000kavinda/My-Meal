@@ -14,6 +14,7 @@ import kotlinx.serialization.json.doubleOrNull
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import org.myapp.mymeal.toJpegByteArray
+import org.myapp.mymeal.utils.Constants
 
 suspend fun analyzeImages(imageBitmap: ImageBitmap?): String {
     if (imageBitmap == null) {
@@ -22,14 +23,12 @@ suspend fun analyzeImages(imageBitmap: ImageBitmap?): String {
 
     return withContext(Dispatchers.IO) {
         val client = HttpClient(CIO)
-        val apiUserToken = "07034037979061f548f175ff21f1a5db734182e9"
+        val apiUserToken = Constants.tokenValue
         val headers = mapOf("Authorization" to "Bearer $apiUserToken")
 
         try {
-            // Convert ImageBitmap to ByteArray
             val imageBytes = imageBitmap.toJpegByteArray()
 
-            // Step 1: Upload Image
             val segmentationResponse = client.submitFormWithBinaryData(
                 url = "https://api.logmeal.com/v2/image/segmentation/complete",
                 formData = formData {
@@ -47,7 +46,6 @@ suspend fun analyzeImages(imageBitmap: ImageBitmap?): String {
                 .jsonObject["imageId"]?.jsonPrimitive?.content
                 ?: return@withContext "Error: ImageId not received."
 
-            // Step 2: Fetch Nutritional Information
             val nutritionalResponse = client.post("https://api.logmeal.com/v2/recipe/nutritionalInfo") {
                 headers {
                     append(HttpHeaders.Authorization, "Bearer $apiUserToken")
@@ -58,7 +56,6 @@ suspend fun analyzeImages(imageBitmap: ImageBitmap?): String {
 
             val nutritionalBody = nutritionalResponse.bodyAsText()
 
-            // Parse JSON and extract required fields
             val jsonResponse = Json.parseToJsonElement(nutritionalBody).jsonObject
             val nutritionalInfo = jsonResponse["nutritional_info"]?.jsonObject ?: return@withContext "Error: Nutritional info not found."
 
@@ -70,13 +67,12 @@ suspend fun analyzeImages(imageBitmap: ImageBitmap?): String {
             val proteinPercent = dailyIntake?.get("PROCNT")?.jsonObject?.get("percent")?.jsonPrimitive?.doubleOrNull ?: 0.0
             val sugarPercent = dailyIntake?.get("SUGAR")?.jsonObject?.get("percent")?.jsonPrimitive?.doubleOrNull ?: 0.0
 
-            // Convert percentages to weights (grams)
-            val carbsWeight = (carbsPercent * calories) / (100 * 4) // 4 calories per gram of carbs
-            val fatWeight = (fatPercent * calories) / (100 * 9) // 9 calories per gram of fat
-            val proteinWeight = (proteinPercent * calories) / (100 * 4) // 4 calories per gram of protein
-            val sugarWeight = (sugarPercent * calories) / (100 * 4) // 4 calories per gram of sugar
+            val carbsWeight = (carbsPercent * calories) / (100 * 4)
+            val fatWeight = (fatPercent * calories) / (100 * 9)
+            val proteinWeight = (proteinPercent * calories) / (100 * 4)
+            val sugarWeight = (sugarPercent * calories) / (100 * 4)
 
-            // Format the result with weights instead of percentages
+
             """
                 Calories: ${"%.2f".format(calories)}
                 Carbohydrates: ${"%.2f".format(carbsWeight)} g
@@ -93,19 +89,6 @@ suspend fun analyzeImages(imageBitmap: ImageBitmap?): String {
 }
 
 
-/*
-fun ImageBitmap.toJpegByteArrays(): ByteArray {
-    val bufferedImage = BufferedImage(this.width, this.height, BufferedImage.TYPE_INT_RGB)
-    val pixelMap = this.toPixelMap()
-    for (x in 0 until this.width) {
-        for (y in 0 until this.height) {
-            bufferedImage.setRGB(x, y, pixelMap[x, y].toArgb())
-        }
-    }
-    val outputStream = ByteArrayOutputStream()
-    ImageIO.write(bufferedImage, "jpeg", outputStream)
-    return outputStream.toByteArray()
-}
-*/
+
 
 
