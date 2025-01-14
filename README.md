@@ -38,3 +38,17 @@ The **My Meal App** prioritizes:
 - **User Experience**: With a seamless and intuitive platform & rsponsive user interfaces.
 - **User Engagement**: Through gamification and reward systems to keep users motivated and involved.
 - **Business Sustainability**: By strategically adjusting the coin collection rate and coin economic value to maintain financial balance.
+
+<br>
+
+# Application Architecture
+
+The application's architecture goes with Model View Controller (MVC) Architecture.
+
+![My meal](https://github.com/user-attachments/assets/cb0c55f6-f110-4af5-ab68-28a5b86eb6fd)
+
+
+
+
+
+
