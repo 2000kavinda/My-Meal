@@ -7,6 +7,7 @@ import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import org.myapp.mymeal.utils.Constants
 
 class NutritionRepository {
     private val client = HttpClient {
@@ -23,7 +24,7 @@ class NutritionRepository {
                 parameters.append("query", query)
             }
             headers {
-                append("X-Api-Key", "54EXf/SPDEA+b2lyROsTSg==8GKxlxVUe1Hayn3w")
+                append("X-Api-Key", Constants.tokenValue2)
             }
         }.body()
     }
