@@ -1,3 +1,5 @@
-# My-Meal
+# My Meal
 
-![lemony-salmon-pasta-with-spring-vegetables-and-ricotta-116031-1](https://github.com/user-attachments/assets/d5702838-0bec-493c-8ee5-01c6f381f350)
+
+<img src="https://github.com/user-attachments/assets/8325bfd3-0bd3-49da-aa73-5d94273e0dbf" alt="My Meal" width="400" height="300">
+
